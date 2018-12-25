@@ -185,39 +185,15 @@ func (c *Client) SQL_GetUsersNotificationSettings(checkId int) ([]*notification.
 func (c *Client) SQL_GetServices(interval int) ([]*service.Service, error) {
 	var services []*service.Service
 
-	if interval == 10 {
-		s1 := &service.Service{
-				ID:   1,
-				Type: 0,
-				Target:"seznam.cz",
-				Interval:10,
-				FailThreshold:5,
-				Host:"myhost",
-				Metadata:"",
-		}
-		s2 := &service.Service{
-			ID:   2,
-			Type: 1,
-			Target:"seznam.cz",
-			Interval:10,
-			FailThreshold:5,
-			Host:"myhost",
-			Metadata:"",
-		}
-
-		services = append(services, s1)
-		services = append(services, s2)
-	}
 
 	if interval == 30 {
 		s1 := &service.Service{
 			ID:   3,
 			Type: 1,
-			Target:"seznam.cz",
-			Interval:10,
+			Interval:30,
 			FailThreshold:5,
 			Host:"myhost",
-			Metadata:"",
+			Metadata:`{"id": 3,"target": "seznam.cz","port": 1234,"timeout": 5,	}`,
 		}
 
 		services = append(services, s1)
@@ -227,11 +203,10 @@ func (c *Client) SQL_GetServices(interval int) ([]*service.Service, error) {
 		s1 := &service.Service{
 			ID:   4,
 			Type: 2,
-			Target:"seznam.cz",
-			Interval:10,
+			Interval:60,
 			FailThreshold:5,
 			Host:"myhost",
-			Metadata:"",
+			Metadata:`{"id": 4,"target": "seznam.cz","timeout": 5,	}`,
 		}
 
 		services = append(services, s1)
