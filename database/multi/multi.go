@@ -4,7 +4,6 @@ import (
 	"github.com/exmonitor/exclient/database"
 )
 
-
 func DBDriverName() string {
 	return "multi"
 }

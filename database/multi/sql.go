@@ -1,9 +1,9 @@
 package multi
 
 import (
+	"fmt"
 	"github.com/exmonitor/exclient/database/spec/notification"
 	"github.com/exmonitor/exclient/database/spec/service"
-	"fmt"
 )
 
 // ********************************************
@@ -11,8 +11,7 @@ import (
 //----------------------------------------------
 func (c *Client) SQL_GetIntervals() ([]int, error) {
 	// TODO
-	fmt.Printf("SQL_GetIntervals - NOT IMPLEMENTED")
-
+	fmt.Printf("SQL_GetIntervals - NOT IMPLEMENTED\n")
 
 	return []int{30, 60, 120, 300}, nil
 }
@@ -25,17 +24,14 @@ func (c *Client) SQL_GetUsersNotificationSettings(serviceID int) ([]*notificatio
 func (c *Client) SQL_GetServices(interval int) ([]*service.Service, error) {
 	var services []*service.Service
 
-	fmt.Printf("SQL_GetServices - NOT IMPLEMENTED")
-
+	fmt.Printf("SQL_GetServices - NOT IMPLEMENTED\n")
 
 	return services, nil
 }
 
-
 func (c *Client) SQL_GetServiceDetails(serviceID int) (*service.Service, error) {
 
-	fmt.Printf("SQL_GetServiceDetails - NOT IMPLEMENTED")
-
+	fmt.Printf("SQL_GetServiceDetails - NOT IMPLEMENTED\n")
 
 	return nil, nil
 }

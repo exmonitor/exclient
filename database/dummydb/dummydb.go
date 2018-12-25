@@ -1,8 +1,8 @@
 package dummydb
 
 import (
-	"time"
 	"fmt"
+	"time"
 
 	"github.com/exmonitor/exclient/database"
 	"github.com/exmonitor/exclient/database/spec/notification"
@@ -40,7 +40,7 @@ func (c *Client) ES_GetFailedServices(from time.Time, to time.Time, interval int
 	fmt.Printf("DummyDB| ES_GetFailedServices | statusCounter %d, statusIncreaser %d\n", dummyDBStatusCounter, dummyDBStatusIncreaser)
 
 	// simulate change, we sent 10x  failed and than 10 non-failed for some services
-	if  dummyDBStatusIncreaser > 0 {
+	if dummyDBStatusIncreaser > 0 {
 		dummyDBStatusCounter += dummyDBStatusIncreaser
 		if dummyDBStatusCounter > 25 {
 			dummyDBStatusIncreaser = -1
@@ -121,10 +121,9 @@ func (c *Client) ES_GetFailedServices(from time.Time, to time.Time, interval int
 	return statusArray, nil
 }
 
-
-func (c *Client) ES_SaveServiceStatus(s *status.ServiceStatus) (error) {
+func (c *Client) ES_SaveServiceStatus(s *status.ServiceStatus) error {
 	// TODO
-	fmt.Printf("ES_SaveServiceStatus - NOT IMPLEMENTED")
+	fmt.Printf("ES_SaveServiceStatus - NOT IMPLEMENTED\n")
 	return nil
 }
 
@@ -142,7 +141,7 @@ func (c *Client) SQL_GetUsersNotificationSettings(checkId int) ([]*notification.
 		// user1 email
 		user1Notif := &notification.UserNotificationSettings{
 			Target: "jardaID1@seznam.cz",
-			Type: "email",
+			Type:   "email",
 		}
 
 		userNotifSettings = append(userNotifSettings, user1Notif)
@@ -150,12 +149,12 @@ func (c *Client) SQL_GetUsersNotificationSettings(checkId int) ([]*notification.
 		// user1 email
 		user1Notif := &notification.UserNotificationSettings{
 			Target: "jardaID2@seznam.cz",
-			Type: "email",
+			Type:   "email",
 		}
 		// user3 email
 		user2Notif := &notification.UserNotificationSettings{
 			Target: "123456789ID2",
-			Type: "sms",
+			Type:   "sms",
 		}
 
 		userNotifSettings = append(userNotifSettings, user1Notif)
@@ -164,7 +163,7 @@ func (c *Client) SQL_GetUsersNotificationSettings(checkId int) ([]*notification.
 		// user1 email
 		user1Notif := &notification.UserNotificationSettings{
 			Target: "TomosID3@seznam.cz",
-			Type: "email",
+			Type:   "email",
 		}
 
 		userNotifSettings = append(userNotifSettings, user1Notif)
@@ -173,7 +172,7 @@ func (c *Client) SQL_GetUsersNotificationSettings(checkId int) ([]*notification.
 		// user1 email
 		user1Notif := &notification.UserNotificationSettings{
 			Target: "456789854ID4",
-			Type: "sms",
+			Type:   "sms",
 		}
 
 		userNotifSettings = append(userNotifSettings, user1Notif)
@@ -185,15 +184,14 @@ func (c *Client) SQL_GetUsersNotificationSettings(checkId int) ([]*notification.
 func (c *Client) SQL_GetServices(interval int) ([]*service.Service, error) {
 	var services []*service.Service
 
-
 	if interval == 30 {
 		s1 := &service.Service{
-			ID:   3,
-			Type: 1,
-			Interval:30,
-			FailThreshold:5,
-			Host:"myhost",
-			Metadata:`{"id": 3,"target": "seznam.cz","port": 1234,"timeout": 5}`,
+			ID:            3,
+			Type:          1,
+			Interval:      30,
+			FailThreshold: 5,
+			Host:          "myhost",
+			Metadata:      `{"id": 3,"target": "seznam.cz","port": 1234,"timeout": 5}`,
 		}
 
 		services = append(services, s1)
@@ -201,22 +199,64 @@ func (c *Client) SQL_GetServices(interval int) ([]*service.Service, error) {
 
 	if interval == 60 {
 		s1 := &service.Service{
-			ID:   4,
-			Type: 2,
-			Interval:60,
-			FailThreshold:5,
-			Host:"myhost",
-			Metadata:`{"id": 4,"target": "seznam.cz","timeout": 5}`,
+			ID:            4,
+			Type:          2,
+			Interval:      60,
+			FailThreshold: 5,
+			Host:          "myhost",
+			Metadata:      `{"id": 4,"target": "seznam.cz","timeout": 5}`,
 		}
 
-		services = append(services, s1)
+		s2 := &service.Service{
+			ID:            5,
+			Type:          0,
+			Interval:      60,
+			FailThreshold: 3,
+			Host:          "myhost",
+			Metadata: `{
+	"id": 1,
+	"port": 443,
+	"target": "https://master.cz",
+	"timeout": 5,
+	"method": "GET",
+	"query": "?var1=value1&var2=value2",
+	"postData": [
+		{
+			"name": "var1",
+			"value": "value1"
+		}
+	],
+	"extraHeaders": [
+		{
+			"name": "MyHeader",
+			"value": "My Value"
+		}
+	],
+	"authEnabled": false,
+	"authUsername": "admin",
+	"authPassword": "adminPass",
+	"contentCheckEnabled": false,
+	"contentCheckString": "my_string",
+	"allowedHttpStatusCodes": [
+		200,
+		201,
+		403,
+		404
+	],
+	"tlsSkipVerify": false,
+	"tlsCheckCertificates": true,
+	"tlsCertExpirationThreshold": 10
+}`,
+		}
+
+		services = append(services, s2)
 	}
 
 	return services, nil
 }
 
 func (c *Client) SQL_GetServiceDetails(checkID int) (*service.Service, error) {
-	var  serviceDetail *service.Service
+	var serviceDetail *service.Service
 	if checkID == 1 {
 		serviceDetail = &service.Service{
 			ID:            1,
@@ -257,7 +297,6 @@ func (c *Client) SQL_GetServiceDetails(checkID int) (*service.Service, error) {
 		}
 
 	}
-
 
 	return serviceDetail, nil
 }

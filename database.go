@@ -3,11 +3,10 @@ package exclient
 import (
 	"github.com/pkg/errors"
 
+	"github.com/exmonitor/exclient/database"
 	"github.com/exmonitor/exclient/database/dummydb"
 	"github.com/exmonitor/exclient/database/multi"
-	"github.com/exmonitor/exclient/database"
 )
-
 
 type DBConfig struct {
 	DBDriver string
@@ -18,7 +17,6 @@ type DBConfig struct {
 	MariaUser       string
 	MariaPassword   string
 }
-
 
 func GetDBClient(conf DBConfig) (database.ClientInterface, error) {
 	switch conf.DBDriver {
