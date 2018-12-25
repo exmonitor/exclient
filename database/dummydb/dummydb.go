@@ -193,7 +193,7 @@ func (c *Client) SQL_GetServices(interval int) ([]*service.Service, error) {
 			Interval:30,
 			FailThreshold:5,
 			Host:"myhost",
-			Metadata:`{"id": 3,"target": "seznam.cz","port": 1234,"timeout": 5,	}`,
+			Metadata:`{"id": 3,"target": "seznam.cz","port": 1234,"timeout": 5}`,
 		}
 
 		services = append(services, s1)
@@ -206,7 +206,7 @@ func (c *Client) SQL_GetServices(interval int) ([]*service.Service, error) {
 			Interval:60,
 			FailThreshold:5,
 			Host:"myhost",
-			Metadata:`{"id": 4,"target": "seznam.cz","timeout": 5,	}`,
+			Metadata:`{"id": 4,"target": "seznam.cz","timeout": 5}`,
 		}
 
 		services = append(services, s1)
