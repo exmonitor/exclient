@@ -122,7 +122,7 @@ func (c *Client) ES_GetFailedServices(from time.Time, to time.Time, interval int
 }
 
 
-func (c *Config) ES_SaveServiceStatus(s *status.ServiceStatus) (error) {
+func (c *Client) ES_SaveServiceStatus(s *status.ServiceStatus) (error) {
 	// TODO
 	fmt.Printf("ES_SaveServiceStatus - NOT IMPLEMENTED")
 	return nil
