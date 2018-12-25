@@ -249,6 +249,7 @@ func (c *Client) SQL_GetServices(interval int) ([]*service.Service, error) {
 }`,
 		}
 
+		services = append(services, s1)
 		services = append(services, s2)
 	}
 
