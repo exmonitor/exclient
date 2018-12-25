@@ -2,25 +2,18 @@ package status
 
 import "time"
 
-//
-type FailedStatus struct {
+type ServiceStatus struct {
 	Id            int
-	ReqId         string
 	FailThreshold int
 	ResentEvery   time.Duration
 	Duration      time.Duration
 	Message       string
+	Result        bool
+	ReqId         string
 }
-
-type ServiceStatus struct {
-
-}
-
-
-
 
 // find status in the status array
-func FindStatus(s []*FailedStatus, id int) *FailedStatus {
+func FindStatus(s []*ServiceStatus, id int) *ServiceStatus {
 	for _, status := range s {
 		if status.Id == id {
 			return status
@@ -30,6 +23,6 @@ func FindStatus(s []*FailedStatus, id int) *FailedStatus {
 }
 
 // check if status with specific id exists in the status array
-func Exists(s []*FailedStatus, id int) bool {
+func Exists(s []*ServiceStatus, id int) bool {
 	return FindStatus(s, id) != nil
 }

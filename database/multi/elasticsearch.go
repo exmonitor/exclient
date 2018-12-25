@@ -10,7 +10,7 @@ import (
 // **************************************************
 // ELASTIC SEARCH
 ///--------------------------------------------------
-func (c *Client) ES_GetFailedServices(from time.Time, to time.Time, interval int) ([]*status.FailedStatus, error) {
+func (c *Client) ES_GetFailedServices(from time.Time, to time.Time, interval int) ([]*status.ServiceStatus, error) {
 	// just dummy record return
 	fmt.Printf("ES_GetFailedServices - NOT IMPLEMENTED")
 

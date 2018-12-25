@@ -33,9 +33,9 @@ var dummyDBStatusIncreaser = 1
 // **************************************************
 // ELASTIC SEARCH
 ///--------------------------------------------------
-func (c *Client) ES_GetFailedServices(from time.Time, to time.Time, interval int) ([]*status.FailedStatus, error) {
+func (c *Client) ES_GetFailedServices(from time.Time, to time.Time, interval int) ([]*status.ServiceStatus, error) {
 	// just dummy record return
-	var statusArray []*status.FailedStatus
+	var statusArray []*status.ServiceStatus
 
 	fmt.Printf("DummyDB| ES_GetFailedServices | statusCounter %d, statusIncreaser %d\n", dummyDBStatusCounter, dummyDBStatusIncreaser)
 
@@ -47,7 +47,7 @@ func (c *Client) ES_GetFailedServices(from time.Time, to time.Time, interval int
 		}
 		if interval == 30 {
 
-			status1 := &status.FailedStatus{
+			status1 := &status.ServiceStatus{
 				Id:            1,
 				Duration:      time.Second,
 				Message:       "OK",
@@ -55,7 +55,7 @@ func (c *Client) ES_GetFailedServices(from time.Time, to time.Time, interval int
 				ReqId:         "xxxx",
 				ResentEvery:   time.Minute * 60,
 			}
-			status2 := &status.FailedStatus{
+			status2 := &status.ServiceStatus{
 				Id:            2,
 				Duration:      time.Second,
 				Message:       "check tcp: connection time out",
@@ -67,7 +67,7 @@ func (c *Client) ES_GetFailedServices(from time.Time, to time.Time, interval int
 			statusArray = append(statusArray, status1)
 			statusArray = append(statusArray, status2)
 		} else if interval == 60 {
-			status3 := &status.FailedStatus{
+			status3 := &status.ServiceStatus{
 				Id:            3,
 				Duration:      time.Second,
 				Message:       "check tcp: connection refused",
@@ -75,7 +75,7 @@ func (c *Client) ES_GetFailedServices(from time.Time, to time.Time, interval int
 				ReqId:         "xxxxzzzz",
 				ResentEvery:   time.Minute * 5,
 			}
-			status4 := &status.FailedStatus{
+			status4 := &status.ServiceStatus{
 				Id:            4,
 				Duration:      time.Second,
 				Message:       "check http: returned 503 status",
@@ -94,7 +94,7 @@ func (c *Client) ES_GetFailedServices(from time.Time, to time.Time, interval int
 		}
 		if interval == 30 {
 
-			status2 := &status.FailedStatus{
+			status2 := &status.ServiceStatus{
 				Id:            2,
 				Duration:      time.Second,
 				Message:       "check tcp: connection time out",
@@ -105,7 +105,7 @@ func (c *Client) ES_GetFailedServices(from time.Time, to time.Time, interval int
 
 			statusArray = append(statusArray, status2)
 		} else if interval == 60 {
-			status3 := &status.FailedStatus{
+			status3 := &status.ServiceStatus{
 				Id:            3,
 				Duration:      time.Second,
 				Message:       "check tcp: connection refused",
@@ -185,8 +185,57 @@ func (c *Client) SQL_GetUsersNotificationSettings(checkId int) ([]*notification.
 func (c *Client) SQL_GetServices(interval int) ([]*service.Service, error) {
 	var services []*service.Service
 
-	fmt.Printf("SQL_GetServices - NOT IMPLEMENTED")
+	if interval == 10 {
+		s1 := &service.Service{
+				ID:   1,
+				Type: 0,
+				Target:"seznam.cz",
+				Interval:10,
+				FailThreshold:5,
+				Host:"myhost",
+				Metadata:"",
+		}
+		s2 := &service.Service{
+			ID:   2,
+			Type: 1,
+			Target:"seznam.cz",
+			Interval:10,
+			FailThreshold:5,
+			Host:"myhost",
+			Metadata:"",
+		}
 
+		services = append(services, s1)
+		services = append(services, s2)
+	}
+
+	if interval == 30 {
+		s1 := &service.Service{
+			ID:   3,
+			Type: 1,
+			Target:"seznam.cz",
+			Interval:10,
+			FailThreshold:5,
+			Host:"myhost",
+			Metadata:"",
+		}
+
+		services = append(services, s1)
+	}
+
+	if interval == 60 {
+		s1 := &service.Service{
+			ID:   4,
+			Type: 2,
+			Target:"seznam.cz",
+			Interval:10,
+			FailThreshold:5,
+			Host:"myhost",
+			Metadata:"",
+		}
+
+		services = append(services, s1)
+	}
 
 	return services, nil
 }
@@ -195,45 +244,41 @@ func (c *Client) SQL_GetServiceDetails(checkID int) (*service.Service, error) {
 	var  serviceDetail *service.Service
 	if checkID == 1 {
 		serviceDetail = &service.Service{
-			ID:1,
-			Host:"myServer1",
-			Target:"web.myserver.com",
-			Port:80,
-			ServiceType:1,
-			FailThreshold:5,
-			Interval:30,
+			ID:            1,
+			Host:          "myServer1",
+			Target:        "web.myserver.com",
+			Type:          1,
+			FailThreshold: 5,
+			Interval:      30,
 		}
 	} else if checkID == 2 {
 		serviceDetail = &service.Service{
-			ID:2,
-			Host:"myWeb1",
-			Target:"webik.com",
-			Port:443,
-			ServiceType:1,
-			FailThreshold:5,
-			Interval:30,
+			ID:            2,
+			Host:          "myWeb1",
+			Target:        "webik.com",
+			Type:          1,
+			FailThreshold: 5,
+			Interval:      30,
 		}
 
 	} else if checkID == 3 {
 		serviceDetail = &service.Service{
-			ID:3,
-			Host:"bigServer",
-			Target:"seznam.com",
-			Port:8080,
-			ServiceType:1,
-			FailThreshold:3,
-			Interval:30,
+			ID:            3,
+			Host:          "bigServer",
+			Target:        "seznam.com",
+			Type:          1,
+			FailThreshold: 3,
+			Interval:      30,
 		}
 
 	} else if checkID == 4 {
 		serviceDetail = &service.Service{
-			ID:4,
-			Host:"myICMPTestServer",
-			Target:"google.com",
-			Port:0,
-			ServiceType:2,
-			FailThreshold:3,
-			Interval:30,
+			ID:            4,
+			Host:          "myICMPTestServer",
+			Target:        "google.com",
+			Type:          2,
+			FailThreshold: 3,
+			Interval:      30,
 		}
 
 	}
