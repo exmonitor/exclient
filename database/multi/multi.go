@@ -74,4 +74,5 @@ func mysqlConnectionString(mariaConnection string, mariaUser string, mariaPasswo
 // close db connections
 func (c *Client) Close() {
 	c.sqlClient.Close()
+	c.logger.Log("successfully closed sql connection")
 }

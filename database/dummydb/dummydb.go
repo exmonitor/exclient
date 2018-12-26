@@ -27,7 +27,7 @@ func GetClient(config Config) *Client {
 	return &Client{}
 }
 
-func (c *Client) CLose() {
+func (c *Client) Close() {
 
 }
 
