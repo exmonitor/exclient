@@ -27,9 +27,12 @@ func GetClient(config Config) *Client {
 	return &Client{}
 }
 
+func (c *Client) CLose() {
+
+}
+
 var dummyDBStatusCounter = 0
 var dummyDBStatusIncreaser = 1
-
 // **************************************************
 // ELASTIC SEARCH
 ///--------------------------------------------------
