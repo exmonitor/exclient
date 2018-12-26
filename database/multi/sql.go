@@ -49,9 +49,68 @@ func (c *Client) SQL_GetIntervals() ([]int, error) {
 	return intervals, nil
 }
 
+/*
+| notification | CREATE TABLE `notification` (
+  `id_notification` int(5) NOT NULL AUTO_INCREMENT,
+  `type` varchar(30) NOT NULL,
+  `target` varchar(30) NOT NULL,
+  `fk_users` int(11) NOT NULL,
+  `fk_settings` int(11) NOT NULL,
+  PRIMARY KEY (`id_notification`),
+  KEY `fk_users` (`fk_users`),
+  KEY `fk_settings` (`fk_settings`),
+  CONSTRAINT `notify_settings` FOREIGN KEY (`fk_settings`) REFERENCES `notify_settings` (`id_settings`),
+  CONSTRAINT `users` FOREIGN KEY (`fk_users`) REFERENCES `users` (`id_users`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 |
+*/
 func (c *Client) SQL_GetUsersNotificationSettings(serviceID int) ([]*notification.UserNotificationSettings, error) {
+	t := chronos.New()
+	q := "SELECT " +
+		"notification.type, " +
+		"notification.target, " +
+		"notification.fk_settings " +
+		"FROM " +
+		"services " +
+		"JOIN hosts ON fk_service_hosts=id_hosts " +
+		"JOIN users ON hosts.fk_customer=users.fk_customer " +
+		"JOIN notification ON id_users=fk_users " +
+		"JOIN notify_settings ON fk_settings=id_settings " +
+		"WHERE services.id_services = ?;"
+	// prepare sql query
+	query, err := c.sqlClient.Prepare(q)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to prepare query SQL_GetUsersNotificationSettings")
+	}
+	// execute sql query
+	rows, err := query.Query(serviceID)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to execute SQL_GetUsersNotificationSettings")
+	}
+	var notifications []*notification.UserNotificationSettings
 
-	return nil, nil
+	// read result
+	for rows.Next() {
+		var target, notificationType string
+		var resentSettings int
+		// scan rows
+		err := rows.Scan(&target, &notificationType, &resentSettings)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to scan values in SQL_GetUsersNotificationSettings")
+		}
+		// init UserNotificationSettings struct
+		n := &notification.UserNotificationSettings{
+			Target:         target,
+			Type:           notificationType,
+			ResentSettings: resentSettings,
+		}
+		notifications = append(notifications, n)
+	}
+
+	t.Finish()
+	if c.timeProfiling {
+		c.logger.LogDebug("TIME_PROFILING: executed SQL_GetUsersNotificationSettings:%d in %sms", serviceID, t.StringMilisec())
+	}
+	return notifications, nil
 }
 
 func (c *Client) SQL_GetServices(interval int) ([]*service.Service, error) {
@@ -108,7 +167,7 @@ func (c *Client) SQL_GetServices(interval int) ([]*service.Service, error) {
 
 	t.Finish()
 	if c.timeProfiling {
-		c.logger.LogDebug("TIME_PROFILING: executed SQL_GetServices in %sms", t.StringMilisec())
+		c.logger.LogDebug("TIME_PROFILING: executed SQL_GetServices:%ds in %sms", interval, t.StringMilisec())
 	}
 	return services, nil
 }
@@ -163,7 +222,7 @@ func (c *Client) SQL_GetServiceDetails(serviceID int) (*service.Service, error) 
 
 	t.Finish()
 	if c.timeProfiling {
-		c.logger.LogDebug("TIME_PROFILING: executed SQL_GetServiceDetails in %sms", t.StringMilisec())
+		c.logger.LogDebug("TIME_PROFILING: executed SQL_GetServiceDetails:%d in %sms", serviceID, t.StringMilisec())
 	}
 
 	return s, nil
