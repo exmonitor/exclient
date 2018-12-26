@@ -32,7 +32,7 @@ func (c *Client) SQL_GetIntervals() ([]int, error) {
 	// read result
 	for rows.Next() {
 		var id, value int
-		err := rows.Scan(id, value)
+		err := rows.Scan(&id, &value)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to scan values in SQL_GetIntervals")
 		}
