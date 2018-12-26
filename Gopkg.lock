@@ -5,7 +5,7 @@
   branch = "master"
   name = "github.com/exmonitor/chronos"
   packages = ["."]
-  revision = "249801e33771d1d32bac5a8bab057f23cfb8df63"
+  revision = "35f8920fcfb988c291b8f15ee355d2fdcb4f3627"
 
 [[projects]]
   branch = "master"
