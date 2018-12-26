@@ -1,13 +1,14 @@
 package multi
 
 import (
-	"github.com/exmonitor/exclient/database"
-
 	"database/sql"
 	"fmt"
+
+	"github.com/exmonitor/exlogger"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/pkg/errors"
-	"github.com/exmonitor/exlogger"
+
+	"github.com/exmonitor/exclient/database"
 )
 
 const (
@@ -28,13 +29,15 @@ type Config struct {
 	MariaPassword     string
 	MariaDatabaseName string
 
-	Logger *exlogger.Logger
+	Logger        *exlogger.Logger
+	TimeProfiling bool
 }
 
 type Client struct {
 	sqlClient *sql.DB
 
-	logger *exlogger.Logger
+	logger        *exlogger.Logger
+	timeProfiling bool
 	// implement client db interface
 	database.ClientInterface
 }
@@ -60,9 +63,10 @@ func New(conf Config) (*Client, error) {
 	// elastic search connection
 	// TODO
 	newClient := &Client{
-		sqlClient:db,
+		sqlClient: db,
 
-		logger:conf.Logger,
+		logger:        conf.Logger,
+		timeProfiling: conf.TimeProfiling,
 	}
 	return newClient, nil
 }

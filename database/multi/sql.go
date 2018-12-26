@@ -2,6 +2,7 @@ package multi
 
 import (
 	"fmt"
+	"github.com/exmonitor/chronos"
 	"github.com/exmonitor/exclient/database/spec/notification"
 	"github.com/exmonitor/exclient/database/spec/service"
 	"github.com/pkg/errors"
@@ -21,6 +22,7 @@ import (
 
 */
 func (c *Client) SQL_GetIntervals() ([]int, error) {
+	t := chronos.New()
 	q := "SELECT id_interval,value FROM `intervalSec`"
 	// create sql query
 	rows, err := c.sqlClient.Query(q)
@@ -39,6 +41,11 @@ func (c *Client) SQL_GetIntervals() ([]int, error) {
 		intervals = append(intervals, value)
 	}
 
+	c.logger.LogDebug("fetched %d intervals from SQL", len(intervals))
+	t.Finish()
+	if c.timeProfiling {
+		c.logger.LogDebug("executed SQL_GetIntervals in %s", t.StringMilisec())
+	}
 	return intervals, nil
 }
 
