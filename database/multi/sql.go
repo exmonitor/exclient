@@ -21,7 +21,7 @@ import (
 
 */
 func (c *Client) SQL_GetIntervals() ([]int, error) {
-	q := "SELECT id,value FROM `intervalSec`"
+	q := "SELECT id_interval,value FROM `intervalSec`"
 	// create sql query
 	rows, err := c.sqlClient.Query(q)
 	if err != nil {

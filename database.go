@@ -6,6 +6,7 @@ import (
 	"github.com/exmonitor/exclient/database"
 	"github.com/exmonitor/exclient/database/dummydb"
 	"github.com/exmonitor/exclient/database/multi"
+	"github.com/exmonitor/exlogger"
 )
 
 type DBConfig struct {
@@ -17,6 +18,8 @@ type DBConfig struct {
 	MariaDatabaseName string
 	MariaUser         string
 	MariaPassword     string
+
+	Logger *exlogger.Logger
 }
 
 func GetDBClient(conf DBConfig) (database.ClientInterface, error) {
@@ -32,6 +35,8 @@ func GetDBClient(conf DBConfig) (database.ClientInterface, error) {
 			MariaDatabaseName: conf.MariaDatabaseName,
 			MariaUser:         conf.MariaUser,
 			MariaPassword:     conf.MariaPassword,
+
+			Logger:conf.Logger,
 		}
 		return multi.New(config)
 	default:

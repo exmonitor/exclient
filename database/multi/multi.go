@@ -7,6 +7,7 @@ import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/pkg/errors"
+	"github.com/exmonitor/exlogger"
 )
 
 const (
@@ -26,16 +27,23 @@ type Config struct {
 	MariaUser         string
 	MariaPassword     string
 	MariaDatabaseName string
+
+	Logger *exlogger.Logger
 }
 
 type Client struct {
 	sqlClient *sql.DB
 
+	logger *exlogger.Logger
 	// implement client db interface
 	database.ClientInterface
 }
 
 func New(conf Config) (*Client, error) {
+	if conf.Logger == nil {
+		return nil, errors.Wrapf(invalidConfigError, "conf.Logger must not be nil")
+	}
+
 	// create sql connection string
 	sqlConnectionString := mysqlConnectionString(conf.MariaConnection, conf.MariaUser, conf.MariaPassword, conf.MariaDatabaseName)
 	// init sql connection
@@ -47,11 +55,14 @@ func New(conf Config) (*Client, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to ping sql connection")
 	}
+	conf.Logger.Log("successfully connected to sql db %s", conf.MariaConnection)
 
-
-
+	// elastic search connection
+	// TODO
 	newClient := &Client{
 		sqlClient:db,
+
+		logger:conf.Logger,
 	}
 	return newClient, nil
 }
