@@ -13,9 +13,10 @@ type DBConfig struct {
 	// elastic search
 	ElasticConnection string
 	// maria db
-	MariaConnection string
-	MariaUser       string
-	MariaPassword   string
+	MariaConnection   string
+	MariaDatabaseName string
+	MariaUser         string
+	MariaPassword     string
 }
 
 func GetDBClient(conf DBConfig) (database.ClientInterface, error) {
@@ -28,6 +29,7 @@ func GetDBClient(conf DBConfig) (database.ClientInterface, error) {
 		config := multi.Config{
 			ElasticConnection: conf.ElasticConnection,
 			MariaConnection:   conf.MariaConnection,
+			MariaDatabaseName: conf.MariaDatabaseName,
 			MariaUser:         conf.MariaUser,
 			MariaPassword:     conf.MariaPassword,
 		}
