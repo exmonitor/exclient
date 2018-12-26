@@ -2,10 +2,12 @@ package multi
 
 import (
 	"fmt"
+
 	"github.com/exmonitor/chronos"
+	"github.com/pkg/errors"
+
 	"github.com/exmonitor/exclient/database/spec/notification"
 	"github.com/exmonitor/exclient/database/spec/service"
-	"github.com/pkg/errors"
 )
 
 // ********************************************
@@ -44,7 +46,7 @@ func (c *Client) SQL_GetIntervals() ([]int, error) {
 	c.logger.LogDebug("fetched %d intervals from SQL", len(intervals))
 	t.Finish()
 	if c.timeProfiling {
-		c.logger.LogDebug("executed SQL_GetIntervals in %s", t.StringMilisec())
+		c.logger.LogDebug("TIME_PROFILING: executed SQL_GetIntervals in %s", t.StringMilisec())
 	}
 	return intervals, nil
 }

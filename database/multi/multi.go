@@ -9,6 +9,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/exmonitor/exclient/database"
+	"github.com/exmonitor/chronos"
 )
 
 const (
@@ -47,6 +48,7 @@ func New(conf Config) (*Client, error) {
 		return nil, errors.Wrapf(invalidConfigError, "conf.Logger must not be nil")
 	}
 
+	t1 := chronos.New()
 	// create sql connection string
 	sqlConnectionString := mysqlConnectionString(conf.MariaConnection, conf.MariaUser, conf.MariaPassword, conf.MariaDatabaseName)
 	// init sql connection
@@ -58,8 +60,11 @@ func New(conf Config) (*Client, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to ping sql connection")
 	}
+	t1.Finish()
 	conf.Logger.Log("successfully connected to sql db %s", conf.MariaConnection)
-
+	if conf.TimeProfiling {
+		conf.Logger.LogDebug("TIME_PROFILING: created sql connection in %s",t1.StringMilisec())
+	}
 	// elastic search connection
 	// TODO
 	newClient := &Client{
