@@ -63,7 +63,7 @@ func New(conf Config) (*Client, error) {
 	t1.Finish()
 	conf.Logger.Log("successfully connected to sql db %s", conf.MariaConnection)
 	if conf.TimeProfiling {
-		conf.Logger.LogDebug("TIME_PROFILING: created sql connection in %s",t1.StringMilisec())
+		conf.Logger.LogDebug("TIME_PROFILING: created sql connection in %sms",t1.StringMilisec())
 	}
 	// elastic search connection
 	// TODO
