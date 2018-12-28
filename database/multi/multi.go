@@ -128,7 +128,8 @@ func createElasticsearchClient(conf Config, ctx context.Context) (*elastic.Clien
 	}
 
 	// be sure that default index is created
-	i, err := esClient.Get().Index(esStatusIndex).Do(ctx)
+	i, err := esClient.Index().Id(esStatusIndex).Do(ctx)
+
 	if err != nil {
 		fmt.Printf("failed to get index %s\n", err)
 	}
