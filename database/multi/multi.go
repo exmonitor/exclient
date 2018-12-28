@@ -53,51 +53,18 @@ func New(conf Config) (*Client, error) {
 	if conf.Logger == nil {
 		return nil, errors.Wrapf(invalidConfigError, "conf.Logger must not be nil")
 	}
+	ctx := context.Background()
 
 	// SQL
-	t1 := chronos.New()
-	// create sql connection string
-	sqlConnectionString := mysqlConnectionString(conf.MariaConnection, conf.MariaUser, conf.MariaPassword, conf.MariaDatabaseName)
-	// init sql connection
-	sqlClient, err := sql.Open(sqlDriver, sqlConnectionString)
+	sqlClient, err := createSqlClient(conf)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to create sql connection")
-	}
-	err = sqlClient.Ping()
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to ping sql connection")
-	}
-	t1.Finish()
-	conf.Logger.Log("successfully connected to sql db %s", conf.MariaConnection)
-	if conf.TimeProfiling {
-		conf.Logger.LogDebug("TIME_PROFILING: created sql connection in %sms", t1.StringMilisec())
+		return nil, err
 	}
 
 	// ELASTIC SEARCH
-	t2 := chronos.New()
-	ctx := context.Background()
-	// Create a client
-	esClient, err := elastic.NewClient(elastic.SetURL(conf.ElasticConnection))
-
+	esClient, err := createElasticsearchClient(conf, ctx)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to create elasticsearch connection")
-	}
-	// check connection
-	_, _, err = esClient.Ping(conf.ElasticConnection).Do(ctx)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to ping elasticsearch")
-	}
-
-	// be sure that default index is created
-	_, err = esClient.CreateIndex(esStatusIndex).Do(ctx)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to create default index for elasticsearch")
-	}
-
-	t2.Finish()
-	conf.Logger.Log("successfully connected to elasticsearch db %s", conf.ElasticConnection)
-	if conf.TimeProfiling {
-		conf.Logger.LogDebug("TIME_PROFILING: created elasticsearch connection in %sms", t2.StringMilisec())
+		return nil, err
 	}
 
 	// init client
@@ -120,4 +87,60 @@ func mysqlConnectionString(mariaConnection string, mariaUser string, mariaPasswo
 func (c *Client) Close() {
 	c.sqlClient.Close()
 	c.logger.Log("successfully closed sql connection")
+}
+
+// inititalise and check sql connection
+func createSqlClient(conf Config) (*sql.DB, error) {
+	// SQL
+	t1 := chronos.New()
+	// create sql connection string
+	sqlConnectionString := mysqlConnectionString(conf.MariaConnection, conf.MariaUser, conf.MariaPassword, conf.MariaDatabaseName)
+	// init sql connection
+	sqlClient, err := sql.Open(sqlDriver, sqlConnectionString)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to create sql connection")
+	}
+	err = sqlClient.Ping()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to ping sql connection")
+	}
+	t1.Finish()
+	conf.Logger.Log("successfully connected to sql db %s", conf.MariaConnection)
+	if conf.TimeProfiling {
+		conf.Logger.LogDebug("TIME_PROFILING: created sql connection in %sms", t1.StringMilisec())
+	}
+
+	return sqlClient, nil
+}
+
+func createElasticsearchClient(conf Config, ctx context.Context) (*elastic.Client, error) {
+	t2 := chronos.New()
+	// Create a client
+	esClient, err := elastic.NewClient(elastic.SetURL(conf.ElasticConnection))
+
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to create elasticsearch connection")
+	}
+	// check connection
+	_, _, err = esClient.Ping(conf.ElasticConnection).Do(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to ping elasticsearch")
+	}
+
+	// be sure that default index is created
+	i, err := esClient.Get().Index(esStatusIndex).Do(ctx)
+	if i == nil {
+		_, err = esClient.CreateIndex(esStatusIndex).Do(ctx)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to create default index for elasticsearch")
+		}
+	}
+
+	t2.Finish()
+	conf.Logger.Log("successfully connected to elasticsearch db %s", conf.ElasticConnection)
+	if conf.TimeProfiling {
+		conf.Logger.LogDebug("TIME_PROFILING: created elasticsearch connection in %sms", t2.StringMilisec())
+	}
+
+	return esClient, nil
 }
