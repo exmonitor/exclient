@@ -7,13 +7,17 @@ import (
 	"github.com/exmonitor/exlogger"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/pkg/errors"
+	"github.com/olivere/elastic"
+	"github.com/exmonitor/chronos"
 
 	"github.com/exmonitor/exclient/database"
-	"github.com/exmonitor/chronos"
+	"context"
 )
 
 const (
 	sqlDriver = "mysql"
+
+	esStatusIndex="service_status"
 )
 
 func DBDriverName() string {
@@ -35,8 +39,10 @@ type Config struct {
 }
 
 type Client struct {
+	esClient *elastic.Client
 	sqlClient *sql.DB
 
+	ctx context.Context
 	logger        *exlogger.Logger
 	timeProfiling bool
 	// implement client db interface
@@ -48,15 +54,16 @@ func New(conf Config) (*Client, error) {
 		return nil, errors.Wrapf(invalidConfigError, "conf.Logger must not be nil")
 	}
 
+	// SQL
 	t1 := chronos.New()
 	// create sql connection string
 	sqlConnectionString := mysqlConnectionString(conf.MariaConnection, conf.MariaUser, conf.MariaPassword, conf.MariaDatabaseName)
 	// init sql connection
-	db, err := sql.Open(sqlDriver, sqlConnectionString)
+	sqlClient, err := sql.Open(sqlDriver, sqlConnectionString)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create sql connection")
 	}
-	err = db.Ping()
+	err = sqlClient.Ping()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to ping sql connection")
 	}
@@ -65,11 +72,39 @@ func New(conf Config) (*Client, error) {
 	if conf.TimeProfiling {
 		conf.Logger.LogDebug("TIME_PROFILING: created sql connection in %sms",t1.StringMilisec())
 	}
-	// elastic search connection
-	// TODO
-	newClient := &Client{
-		sqlClient: db,
 
+	// ELASTIC SEARCH
+	t2 :=  chronos.New()
+	ctx := context.Background()
+	// Create a client
+	esClient, err := elastic.NewClient()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to create elasticsearch connection")
+	}
+	// check connection
+	_ , _ , err = esClient.Ping("/").Do(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to ping elasticsearch")
+	}
+
+	// be sure that default index is created
+	_, err = esClient.CreateIndex(esStatusIndex).Do(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to create default index for elasticsearch")
+	}
+
+	t2.Finish()
+	conf.Logger.Log("successfully connected to elasticsearch db %s", conf.ElasticConnection)
+	if conf.TimeProfiling {
+		conf.Logger.LogDebug("TIME_PROFILING: created elasticsearch connection in %sms",t1.StringMilisec())
+	}
+
+	// init client
+	newClient := &Client{
+		esClient: esClient,
+		sqlClient: sqlClient,
+
+		ctx:ctx,
 		logger:        conf.Logger,
 		timeProfiling: conf.TimeProfiling,
 	}
