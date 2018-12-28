@@ -128,7 +128,7 @@ func createElasticsearchClient(conf Config, ctx context.Context) (*elastic.Clien
 	}
 
 	// be sure that default index is created
-	p, _, err := esClient.Ping(fmt.Sprintf("%s/%s/",conf.ElasticConnection, esStatusIndex)).Do(ctx)
+	p, _, err := esClient.Ping(fmt.Sprintf("%s/%s/",conf.ElasticConnection, "lolo")).Do(ctx)
 
 	if err != nil {
 		fmt.Printf("failed to get index %s\n", err)
