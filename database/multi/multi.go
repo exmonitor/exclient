@@ -130,8 +130,12 @@ func createElasticsearchClient(conf Config, ctx context.Context) (*elastic.Clien
 	_, err = esClient.CreateIndex(esStatusIndex).Do(ctx)
 	if elastic.IsStatusCode(err, 400) {
 		// all good, index already exists
+		conf.Logger.LogDebug("Elasticsearch index %s already created, skipping", esStatusIndex)
 	} else if err != nil {
 		return nil, errors.Wrap(err, "failed to create default index for elasticsearch")
+	} else {
+		conf.Logger.LogDebug("Elasticsearch index %s created", esStatusIndex)
+
 	}
 
 	t2.Finish()
