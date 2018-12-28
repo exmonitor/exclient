@@ -83,7 +83,7 @@ func New(conf Config) (*Client, error) {
 		return nil, errors.Wrap(err, "failed to create elasticsearch connection")
 	}
 	// check connection
-	_, _, err = esClient.Ping("/").Do(ctx)
+	_, _, err = esClient.Ping(conf.ElasticConnection).Do(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to ping elasticsearch")
 	}
