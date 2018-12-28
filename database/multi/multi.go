@@ -127,17 +127,11 @@ func createElasticsearchClient(conf Config, ctx context.Context) (*elastic.Clien
 		return nil, errors.Wrap(err, "failed to ping elasticsearch")
 	}
 
-	// be sure that default index is created
-	p, _, err := esClient.Ping(fmt.Sprintf("%s/%s/",conf.ElasticConnection, "lolo")).Do(ctx)
-
-	if err != nil {
-		fmt.Printf("failed to get index %s\n", err)
-	}
-	if p == nil {
-		_, err = esClient.CreateIndex(esStatusIndex).Do(ctx)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to create default index for elasticsearch")
-		}
+	_, err = esClient.CreateIndex(esStatusIndex).Do(ctx)
+	if elastic.IsConflict(err) {
+		// all good, index already exists
+	} else if err != nil {
+		return nil, errors.Wrap(err, "failed to create default index for elasticsearch")
 	}
 
 	t2.Finish()
