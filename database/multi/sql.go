@@ -207,23 +207,29 @@ func (c *Client) SQL_GetServiceDetails(serviceID int) (*service.Service, error) 
 		return nil, errors.Wrap(err, "failed to execute SQL_GetServiceDetails")
 	}
 
-	// read result
-	var failThreshold, intervalSec, serviceType int
-	var serviceMetadata, hostTarget, hostName, location string
-	// scan rows
-	err = rows.Scan(&serviceID, &failThreshold, &intervalSec, &serviceMetadata, &serviceType, &hostTarget, &hostName, &location)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to scan values in SQL_GetServiceDetails")
-	}
-	// init service struct
-	s := &service.Service{
-		ID:            serviceID,
-		FailThreshold: failThreshold,
-		Metadata:      serviceMetadata,
-		Type:          serviceType,
-		Target:        hostTarget,
-		Host:          hostName,
-		Interval:      intervalSec,
+	var s *service.Service
+	if rows.Next() {
+
+		// read result
+		var failThreshold, intervalSec, serviceType int
+		var serviceMetadata, hostTarget, hostName, location string
+		// scan rows
+		err = rows.Scan(&serviceID, &failThreshold, &intervalSec, &serviceMetadata, &serviceType, &hostTarget, &hostName, &location)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to scan values in SQL_GetServiceDetails")
+		}
+		// init service struct
+		s = &service.Service{
+			ID:            serviceID,
+			FailThreshold: failThreshold,
+			Metadata:      serviceMetadata,
+			Type:          serviceType,
+			Target:        hostTarget,
+			Host:          hostName,
+			Interval:      intervalSec,
+		}
+	} else {
+		return nil, errors.Wrapf(executionFailedError, "failed to fetch service ID %d", serviceID)
 	}
 
 	t.Finish()
