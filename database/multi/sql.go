@@ -195,7 +195,7 @@ func (c *Client) SQL_GetServiceDetails(serviceID int) (*service.Service, error) 
 		"JOIN service_metadata ON fk_service_metadata=id_service_metadata " +
 		"JOIN hosts ON fk_service_hosts=id_hosts " +
 		"JOIN location ON fk_location=id_location " +
-		"WHERE intervalSec.value=?;"
+		"WHERE services.id_services=?;"
 	// prepare sql query
 	query, err := c.sqlClient.Prepare(q)
 	if err != nil {
@@ -207,9 +207,9 @@ func (c *Client) SQL_GetServiceDetails(serviceID int) (*service.Service, error) 
 		return nil, errors.Wrap(err, "failed to execute SQL_GetServiceDetails")
 	}
 
+
 	var s *service.Service
 	if rows.Next() {
-
 		// read result
 		var failThreshold, intervalSec, serviceType int
 		var serviceMetadata, hostTarget, hostName, location string

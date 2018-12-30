@@ -17,14 +17,17 @@ import (
 func (c *Client) ES_GetFailedServices(from time.Time, to time.Time, interval int) ([]*status.ServiceStatus, error) {
 	var serviceStatusArray []*status.ServiceStatus
 	t := chronos.New()
+	c.logger.LogDebug("fetching failedServices from %s to %s for interval %d", from.String(), to.String(), interval)
 
 	// datetime range query
-	timeRangeQuery := elastic.NewRangeQuery("@timestamp").Gte(from).Lt(to)
+	timeRangeFilter := elastic.NewRangeQuery("@timestamp").Gte(from).Lt(to)
 	// failedServices term query
-	faildServiceQuery := elastic.NewTermQuery("result", false)
+	failedServiceQuery := elastic.NewTermQuery("result", false)
+	// match interval
+	intervalQuery :=  elastic.NewTermQuery("interval", interval)
 
 	// build whole search query
-	searchQuery := elastic.NewBoolQuery().Must(faildServiceQuery).Filter(timeRangeQuery)
+	searchQuery := elastic.NewBoolQuery().Must(failedServiceQuery, intervalQuery).Filter(timeRangeFilter)
 
 	// execute search querry
 	// TODO use backoff retry
