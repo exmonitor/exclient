@@ -33,10 +33,6 @@ func (c *Client) ES_GetFailedServices(from time.Time, to time.Time, interval int
 		return nil, errors.Wrapf(err, "failed to get ES_GetFailedServices for int %d", interval)
 	}
 
-	if c.timeProfiling {
-		c.logger.LogDebug("TIME_PROFILING: executed search query in ES_SaveServiceStatus in %sms", searchResult.TookInMillis)
-	}
-
 	// parse results into struct
 	var ttyp status.ServiceStatus
 	for i, item := range searchResult.Each(reflect.TypeOf(ttyp)) {
@@ -47,11 +43,9 @@ func (c *Client) ES_GetFailedServices(from time.Time, to time.Time, interval int
 			c.logger.LogError(nil, "failed to parse status.ServiceStatus num %d in ES_SaveServiceStatus", i)
 		}
 	}
-	c.logger.LogDebug("fetched %d FailedServices from db", len(serviceStatusArray))
-
 	t.Finish()
 	if c.timeProfiling {
-		c.logger.LogDebug("TIME_PROFILING: executed ES_SaveServiceStatus in %sms", t.StringMilisec())
+		c.logger.LogDebug("TIME_PROFILING: executed ES_GetFailedServices in %sms", t.StringMilisec())
 	}
 
 	return serviceStatusArray, nil

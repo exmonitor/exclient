@@ -70,7 +70,7 @@ func (c *Client) SQL_GetIntervals() ([]int, error) {
 func (c *Client) SQL_GetUsersNotificationSettings(serviceID int) ([]*notification.UserNotificationSettings, error) {
 	t := chronos.New()
 	q := "SELECT " +
-		"notification.id_notification" +
+		"notification.id_notification, " +
 		"notification.type, " +
 		"notification.target, " +
 		"notification.fk_settings " +
