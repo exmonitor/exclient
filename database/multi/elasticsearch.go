@@ -19,7 +19,7 @@ func (c *Client) ES_GetFailedServices(from time.Time, to time.Time, interval int
 	t := chronos.New()
 
 	// datetime range query
-	timeRangeQuery := elastic.NewRangeQuery(esRangeQueryName).Gte(from).Lt(to)
+	timeRangeQuery := elastic.NewRangeQuery("@timestamp").Gte(from).Lt(to)
 	// failedServices term query
 	faildServiceQuery := elastic.NewTermQuery("result", false)
 
