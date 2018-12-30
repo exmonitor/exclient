@@ -21,11 +21,9 @@ func (c *Client) ES_GetFailedServices(from time.Time, to time.Time, interval int
 
 func (c *Client) ES_SaveServiceStatus(s *status.ServiceStatus) error {
 	t := chronos.New()
-	// add save timestamp
-	s.InsertTimestamp = time.Now()
 
 	// insert data to elasticsearch db
-	fmt.Printf("DEBUG: saving %#v",*s)
+	fmt.Printf("DEBUG: saving %#v\n",*s)
 	_, err := c.esClient.Index().Index(esStatusIndex).Type(esStatusDocName).BodyJson(s).Do(c.ctx)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("failed to save service status for id %d", s.Id))
