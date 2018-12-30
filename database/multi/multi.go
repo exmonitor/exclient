@@ -17,8 +17,9 @@ import (
 const (
 	sqlDriver = "mysql"
 
-	esStatusIndex = "service_status"
-	esStatusDocName = "service_status"
+	esStatusIndex    = "service_status"
+	esStatusDocName  = "service_status"
+	esRangeQueryName = "my_range_query"
 )
 
 func DBDriverName() string {
