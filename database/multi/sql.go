@@ -70,6 +70,7 @@ func (c *Client) SQL_GetIntervals() ([]int, error) {
 func (c *Client) SQL_GetUsersNotificationSettings(serviceID int) ([]*notification.UserNotificationSettings, error) {
 	t := chronos.New()
 	q := "SELECT " +
+		"notification.id_notification" +
 		"notification.type, " +
 		"notification.target, " +
 		"notification.fk_settings " +
@@ -95,14 +96,15 @@ func (c *Client) SQL_GetUsersNotificationSettings(serviceID int) ([]*notificatio
 	// read result
 	for rows.Next() {
 		var target, notificationType string
-		var resentSettings int
+		var id, resentSettings int
 		// scan rows
-		err := rows.Scan(&target, &notificationType, &resentSettings)
+		err := rows.Scan(&id, &target, &notificationType, &resentSettings)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to scan values in SQL_GetUsersNotificationSettings")
 		}
 		// init UserNotificationSettings struct
 		n := &notification.UserNotificationSettings{
+			ID:             id,
 			Target:         target,
 			Type:           notificationType,
 			ResentSettings: resentSettings,
