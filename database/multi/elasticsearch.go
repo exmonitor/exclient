@@ -32,7 +32,7 @@ func (c *Client) ES_SaveServiceStatus(s *status.ServiceStatus) error {
 
 	t.Finish()
 	if c.timeProfiling {
-		c.logger.LogDebug("TIME_PROFILING: executed ES_SaveServiceStatus:%ds in %sms", s.Id, t.StringMilisec())
+		c.logger.LogDebug("TIME_PROFILING: executed ES_SaveServiceStatus:ID:%d in %sms", s.Id, t.StringMilisec())
 	}
 	return nil
 }

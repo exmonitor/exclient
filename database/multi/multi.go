@@ -145,7 +145,7 @@ func createElasticsearchClient(conf Config, ctx context.Context) (*elastic.Clien
 	t2.Finish()
 	conf.Logger.Log("successfully connected to elasticsearch db %s", conf.ElasticConnection)
 	if conf.TimeProfiling {
-		conf.Logger.LogDebug("TIME_PROFILING: created elasticsearch connection in %sms, %sm", t2.StringMilisec())
+		conf.Logger.LogDebug("TIME_PROFILING: created elasticsearch connection in %sms, %ss", t2.StringMilisec(), t2.StringSecLong())
 	}
 
 	return esClient, nil
