@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/exmonitor/chronos"
 	"github.com/exmonitor/exclient/database/spec/status"
+	"github.com/pkg/errors"
 )
 
 // **************************************************
@@ -18,7 +20,19 @@ func (c *Client) ES_GetFailedServices(from time.Time, to time.Time, interval int
 }
 
 func (c *Client) ES_SaveServiceStatus(s *status.ServiceStatus) error {
-	// TODO
-	fmt.Printf("ES_SaveServiceStatus - NOT IMPLEMENTED\n")
+	t := chronos.New()
+	// add save timestamp
+	s.InsertTimestamp = time.Now()
+
+	// insert data to elasticsearch db
+	_, err := c.esClient.Index().Index(esStatusIndex).Type(esStatusDocName).BodyJson(s).Do(c.ctx)
+	if err != nil {
+		return errors.Wrap(err, fmt.Sprintf("failed to save service status for id %d", s.Id))
+	}
+
+	t.Finish()
+	if c.timeProfiling {
+		c.logger.LogDebug("TIME_PROFILING: executed ES_SaveServiceStatus:%ds in %sms", s.Id, t.StringMilisec())
+	}
 	return nil
 }
