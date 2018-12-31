@@ -24,7 +24,7 @@ func (c *Client) ES_GetFailedServices(from time.Time, to time.Time, interval int
 	// failedServices term query
 	failedServiceQuery := elastic.NewTermQuery("result", false)
 	// match interval
-	intervalQuery :=  elastic.NewTermQuery("interval", interval)
+	intervalQuery := elastic.NewTermQuery("interval", interval)
 
 	// build whole search query
 	searchQuery := elastic.NewBoolQuery().Must(failedServiceQuery, intervalQuery).Filter(timeRangeFilter)
