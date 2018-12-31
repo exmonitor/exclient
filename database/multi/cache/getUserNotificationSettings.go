@@ -26,10 +26,12 @@ func (s *SQL_GetUsersNotificationSetting) IsCacheValid(serviceID int, ttl time.D
 
 			return false
 		} else {
+			fmt.Printf("cache ttl check: ttl %s, cache saved at %s, cache age %s, time now %s",ttl.String(), r.Age.String(), time.Since(r.Age).String(), time.Now().String())
 			return time.Now().After(r.Age.Add(ttl))
 		}
 	} else {
 		// no cache for this record, so cache is not valid
+		fmt.Printf("cache expired for SQL_GetUsersNotificationSetting:ID: %d", serviceID)
 		return false
 	}
 }
