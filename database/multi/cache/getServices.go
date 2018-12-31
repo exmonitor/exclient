@@ -17,8 +17,8 @@ type SQL_GetServices_Record struct {
 
 // check if cache is still valid
 // returns false in case there is no cache or cache is already expired
-func (s *SQL_GetServices) IsCacheValid(interval int, ttl time.Duration) bool {
-	if r, ok := s.Cache[interval]; ok {
+func (s *SQL_GetServices) IsCacheValid(intervalSec int, ttl time.Duration) bool {
+	if r, ok := s.Cache[intervalSec]; ok {
 		if r.Age.IsZero() {
 			// cache age is not set, cache is not balid
 			return false
@@ -41,10 +41,10 @@ func (s *SQL_GetServices) GetData(interval int) []*service.Service {
 }
 
 // save data to cache
-func (s *SQL_GetServices) CacheData(interval int, d []*service.Service) {
+func (s *SQL_GetServices) CacheData(intervalSec int, d []*service.Service) {
 	r := SQL_GetServices_Record{
 		Age:  time.Now(),
 		Data: d,
 	}
-	s.Cache[interval] = r
+	s.Cache[intervalSec] = r
 }

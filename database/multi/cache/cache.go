@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
+	"fmt"
 )
 
 type CacheSystemConfig struct {
@@ -14,6 +15,10 @@ type CacheSystemConfig struct {
 func New(conf CacheSystemConfig) (*CacheSystem, error) {
 	if conf.TTL == 0 {
 		return nil, errors.Wrap(invalidConfigError, "conf.TTL must not be zero")
+	}
+
+	if conf.TTL < time.Minute {
+		fmt.Printf("WARNING: cache TTL under 1m doesnt make sense much sense as lowest interval is 30s and in each run cache will be expired.\n")
 	}
 
 	sql_getUserNotificationSettings := &SQL_GetUsersNotificationSetting{
