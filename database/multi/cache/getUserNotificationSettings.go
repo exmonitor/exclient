@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/exmonitor/exclient/database/spec/notification"
+	"fmt"
 )
 
 type SQL_GetUsersNotificationSetting struct {
@@ -47,4 +48,5 @@ func (s *SQL_GetUsersNotificationSetting) CacheData(serviceID int, d []*notifica
 		Data: d,
 	}
 	s.Cache[serviceID] = r
+	fmt.Printf("saved to cache SQL_GetUsersNotificationSetting\n")
 }
