@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/exmonitor/exclient/database/spec/notification"
-	"fmt"
 )
 
 type SQL_GetUsersNotificationSetting struct {
@@ -22,16 +21,12 @@ func (s *SQL_GetUsersNotificationSetting) IsCacheValid(serviceID int, ttl time.D
 	if r, ok := s.Cache[serviceID]; ok {
 		if r.Age.IsZero() {
 			// cache age is not set, cache is not valid
-			fmt.Printf("cache is not valid, age is zero  for SQL_GetUsersNotificationSetting:ID: %d", serviceID)
-
 			return false
 		} else {
-			fmt.Printf("cache ttl check: ttl %s, cache saved at %s, cache age %s, time now %s",ttl.String(), r.Age.String(), time.Since(r.Age).String(), time.Now().String())
 			return time.Now().Before(r.Age.Add(ttl))
 		}
 	} else {
 		// no cache for this record, so cache is not valid
-		fmt.Printf("cache not found for SQL_GetUsersNotificationSetting:ID: %d", serviceID)
 		return false
 	}
 }

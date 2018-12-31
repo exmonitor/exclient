@@ -23,7 +23,7 @@ func (s *SQL_GetServices) IsCacheValid(interval int, ttl time.Duration) bool {
 			// cache age is not set, cache is not balid
 			return false
 		} else {
-			return time.Now().After(r.Age.Add(ttl))
+			return time.Now().Before(r.Age.Add(ttl))
 		}
 	} else {
 		// no cache for this record, so cache is not valid
