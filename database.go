@@ -43,6 +43,9 @@ func GetDBClient(conf DBConfig) (database.ClientInterface, error) {
 			MariaUser:         conf.MariaUser,
 			MariaPassword:     conf.MariaPassword,
 
+			CacheEnabled: conf.CacheEnabled,
+			CacheTTL:     conf.CacheTTL,
+
 			Logger:        conf.Logger,
 			TimeProfiling: conf.TimeProfiling,
 		}

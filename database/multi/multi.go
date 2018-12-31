@@ -92,6 +92,7 @@ func New(conf Config) (*Client, error) {
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to create cache system")
 		}
+		conf.Logger.Log("CACHE SYSTEM enabled, TTL %s", conf.CacheTTL)
 	}
 
 	// init client
