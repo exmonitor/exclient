@@ -98,7 +98,7 @@ func (c *Client) SQL_GetUsersNotificationSettings(serviceID int) ([]*notificatio
 		var target, notificationType string
 		var id, resentAfterMin int
 		// scan rows
-		err := rows.Scan(&id, &target, &notificationType, &resentAfterMin)
+		err := rows.Scan(&id, &notificationType, &target, &resentAfterMin)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to scan values in SQL_GetUsersNotificationSettings")
 		}
