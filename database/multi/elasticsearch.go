@@ -17,7 +17,6 @@ import (
 func (c *Client) ES_GetFailedServices(from time.Time, to time.Time, interval int) ([]*status.ServiceStatus, error) {
 	var serviceStatusArray []*status.ServiceStatus
 	t := chronos.New()
-	c.logger.LogDebug("fetching failedServices interval %d, total difference %.2fs", interval, to.Sub(from).Seconds())
 
 	// datetime range query
 	timeRangeFilter := elastic.NewRangeQuery("@timestamp").Gte(from).Lt(to)
