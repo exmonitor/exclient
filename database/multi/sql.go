@@ -78,7 +78,7 @@ func (c *Client) SQL_GetUsersNotificationSettings(serviceID int) ([]*notificatio
 			d := c.cacheSystem.SQL.GetUsersNotificationSettings.GetData(serviceID)
 			t.Finish()
 			if c.timeProfiling {
-				c.logger.LogDebug("TIME_PROFILING: executed cached SQL_GetUsersNotificationSettings:ID:%d in %sms", serviceID, t.StringMilisec())
+				c.logger.LogDebug("TIME_PROFILING: cached    SQL_GetUsersNotificationSettings:ID:%d in %sms", serviceID, t.StringMilisec())
 			}
 			return d, nil
 		} else {
@@ -151,7 +151,7 @@ func (c *Client) SQL_GetServices(interval int) ([]*service.Service, error) {
 			d := c.cacheSystem.SQL.GetServices.GetData(interval)
 			t.Finish()
 			if c.timeProfiling {
-				c.logger.LogDebug("TIME_PROFILING: executed cached SQL_GetServices:%d in %sms", interval, t.StringMilisec())
+				c.logger.LogDebug("TIME_PROFILING: cached    SQL_GetServices:%d in %sms", interval, t.StringMilisec())
 			}
 			return d, nil
 		} else {
@@ -231,7 +231,7 @@ func (c *Client) SQL_GetServiceDetails(serviceID int) (*service.Service, error) 
 			d := c.cacheSystem.SQL.GetServiceDetails.GetData(serviceID)
 			t.Finish()
 			if c.timeProfiling {
-				c.logger.LogDebug("TIME_PROFILING: executed cached SQL_GetServiceDetails:ID:%d in %sms", serviceID, t.StringMilisec())
+				c.logger.LogDebug("TIME_PROFILING: cached    SQL_GetServiceDetails:ID:%d in %sms", serviceID, t.StringMilisec())
 			}
 			return d, nil
 		} else {

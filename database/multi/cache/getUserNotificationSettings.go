@@ -30,8 +30,6 @@ func (s *SQL_GetUsersNotificationSetting) IsCacheValid(serviceID int, ttl time.D
 		}
 	} else {
 		// no cache for this record, so cache is not valid
-		fmt.Printf("cache expired  for SQL_GetUsersNotificationSetting:ID: %d", serviceID)
-
 		return false
 	}
 }
@@ -42,7 +40,6 @@ func (s *SQL_GetUsersNotificationSetting) GetData(serviceID int) []*notification
 		return d.Data
 	}
 	// cached data not found
-	fmt.Printf("no cache found for SQL_GetUsersNotificationSetting:ID: %d", serviceID)
 	return nil
 }
 
@@ -53,6 +50,4 @@ func (s *SQL_GetUsersNotificationSetting) CacheData(serviceID int, d []*notifica
 		Data: d,
 	}
 	s.Cache[serviceID] = r
-	fmt.Printf("saving cache for SQL_GetUsersNotificationSetting:ID: %d", serviceID)
-
 }
