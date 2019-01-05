@@ -8,6 +8,7 @@ import (
 	"github.com/exmonitor/exclient/database/spec/notification"
 	"github.com/exmonitor/exclient/database/spec/service"
 	"github.com/exmonitor/exclient/database/spec/status"
+	"github.com/olivere/elastic"
 )
 
 type Config struct {
@@ -118,6 +119,15 @@ func (c *Client) ES_GetFailedServices(from time.Time, to time.Time, interval int
 
 	return statusArray, nil
 }
+
+
+func (c *Client) ES_GetServicesStatus(from time.Time, to time.Time, elasticQuery ...elastic.Query) ([]*status.ServiceStatus, error) {
+	var serviceStatusArray []*status.ServiceStatus
+
+
+	return serviceStatusArray, nil
+}
+
 
 func (c *Client) ES_SaveServiceStatus(s *status.ServiceStatus) error {
 	// TODO
