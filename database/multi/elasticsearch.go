@@ -98,8 +98,8 @@ func (c *Client) ES_DeleteServicesStatus(from time.Time, to time.Time) error {
 	return nil
 }
 
-func (c *Client) ES_GetAggregatedServicesStatusByID(from time.Time, to time.Time, serviceID int) ([]*status.AgregatedServiceStatus, error) {
-	var serviceStatusArray []*status.AgregatedServiceStatus
+func (c *Client) ES_GetAggregatedServiceStatusByID(from time.Time, to time.Time, serviceID int) (*status.AgregatedServiceStatus, error) {
+	var aggregatedServiceStatus *status.AgregatedServiceStatus
 	t := chronos.New()
 	// search specific serviceID
 	termQuery := elastic.NewTermQuery("id", serviceID)
@@ -125,7 +125,7 @@ func (c *Client) ES_GetAggregatedServicesStatusByID(from time.Time, to time.Time
 			// save elastic internal ID
 			item.Id = rawItem.Id
 
-			serviceStatusArray = append(serviceStatusArray, &item)
+			aggregatedServiceStatus = &item
 		}
 	}
 
@@ -134,7 +134,7 @@ func (c *Client) ES_GetAggregatedServicesStatusByID(from time.Time, to time.Time
 		c.logger.LogDebug("TIME_PROFILING: executed ES_GetAggregatedServicesStatus in %sms", t.StringMilisec())
 	}
 
-	return serviceStatusArray, nil
+	return aggregatedServiceStatus, nil
 }
 
 func (c *Client) ES_SaveAggregatedServiceStatus(s *status.AgregatedServiceStatus) error {

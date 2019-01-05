@@ -120,14 +120,11 @@ func (c *Client) ES_GetFailedServices(from time.Time, to time.Time, interval int
 	return statusArray, nil
 }
 
-
 func (c *Client) ES_GetServicesStatus(from time.Time, to time.Time, elasticQuery ...elastic.Query) ([]*status.ServiceStatus, error) {
 	var serviceStatusArray []*status.ServiceStatus
 
-
 	return serviceStatusArray, nil
 }
-
 
 func (c *Client) ES_SaveServiceStatus(s *status.ServiceStatus) error {
 	// TODO
@@ -135,17 +132,16 @@ func (c *Client) ES_SaveServiceStatus(s *status.ServiceStatus) error {
 	return nil
 }
 
-
 func (c *Client) ES_DeleteServicesStatus(from time.Time, to time.Time) error {
 	fmt.Printf("ES_DeleteServicesStatus - NOT IMPLEMENTED\n")
 	return nil
 }
 
-func (c *Client) ES_GetAggregatedServicesStatusByID(from time.Time, to time.Time, serviceID int) ([]*status.AgregatedServiceStatus, error) {
-	var serviceStatusArray []*status.AgregatedServiceStatus
+func (c *Client) ES_GetAggregatedServiceStatusByID(from time.Time, to time.Time, serviceID int) (*status.AgregatedServiceStatus, error) {
+	var serviceStatus *status.AgregatedServiceStatus
 	// TODO
 	fmt.Printf("ES_GetAggregatedServicesStatusByID - NOT IMPLEMENTED\n")
-	return serviceStatusArray, nil
+	return serviceStatus, nil
 }
 
 func (c *Client) ES_SaveAggregatedServiceStatus(s *status.AgregatedServiceStatus) error {
@@ -153,7 +149,6 @@ func (c *Client) ES_SaveAggregatedServiceStatus(s *status.AgregatedServiceStatus
 	fmt.Printf("ES_SaveAggregatedServiceStatus - NOT IMPLEMENTED\n")
 	return nil
 }
-
 
 // ********************************************
 // MARIA DB

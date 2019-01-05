@@ -18,7 +18,7 @@ type ClientInterface interface {
 	ES_GetServicesStatus(from time.Time, to time.Time, elasticQuery ...elastic.Query) ([]*status.ServiceStatus, error)
 	ES_SaveServiceStatus(s *status.ServiceStatus) error
 	ES_DeleteServicesStatus(from time.Time, to time.Time) error
-	ES_GetAggregatedServicesStatusByID(from time.Time, to time.Time, serviceID int) ([]*status.AgregatedServiceStatus, error)
+	ES_GetAggregatedServiceStatusByID(from time.Time, to time.Time, serviceID int) (*status.AgregatedServiceStatus, error)
 	ES_SaveAggregatedServiceStatus(s *status.AgregatedServiceStatus) error
 
 	// maria queries
