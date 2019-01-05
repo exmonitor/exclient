@@ -19,9 +19,11 @@ import (
 const (
 	sqlDriver = "mysql"
 
-	esStatusIndex    = "service_status"
-	esStatusDocName  = "service_status"
-	esRangeQueryName = "my_range_query"
+	esStatusIndex   = "service_status"
+	esStatusDocName = "service_status"
+
+	esAggregatedStatusIndex   = "service_status"
+	esAggregatedStatusDocName = "service_status"
 )
 
 func DBDriverName() string {
@@ -161,16 +163,25 @@ func createElasticsearchClient(conf Config, ctx context.Context) (*elastic.Clien
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to ping elasticsearch")
 	}
-	// ensure status index is created
-	_, err = esClient.CreateIndex(esStatusIndex).Do(ctx)
+
+	err = ensureCreatedIndex(ctx, esClient, esStatusIndex, conf.Logger)
+	if err != nil {
+		return nil, err
+	}
+	err = ensureCreatedIndex(ctx, esClient, esAggregatedStatusIndex, conf.Logger)
+	if err != nil {
+		return nil, err
+	}
+
+	// ensure aggregated_status index is created
+	_, err = esClient.CreateIndex(esAggregatedStatusIndex).Do(ctx)
 	if elastic.IsStatusCode(err, 400) {
 		// all good, index already exists
-		conf.Logger.LogDebug("Elasticsearch index '%s' already created, skipping", esStatusIndex)
+		conf.Logger.LogDebug("Elasticsearch index '%s' already created, skipping", esAggregatedStatusIndex)
 	} else if err != nil {
-		return nil, errors.Wrap(err, "failed to create default index for elasticsearch")
+		return nil, errors.Wrapf(err, "failed to create default index %s for elasticsearch", esAggregatedStatusIndex)
 	} else {
-		conf.Logger.LogDebug("Elasticsearch index '%s' created", esStatusIndex)
-
+		conf.Logger.LogDebug("Elasticsearch index '%s' created", esAggregatedStatusIndex)
 	}
 
 	t2.Finish()
@@ -180,4 +191,18 @@ func createElasticsearchClient(conf Config, ctx context.Context) (*elastic.Clien
 	}
 
 	return esClient, nil
+}
+
+func ensureCreatedIndex(ctx context.Context, esClient *elastic.Client, indexName string, logger *exlogger.Logger) error {
+	// ensure status index is created
+	_, err := esClient.CreateIndex(indexName).Do(ctx)
+	if elastic.IsStatusCode(err, 400) {
+		// all good, index already exists
+		logger.LogDebug("Elasticsearch index '%s' already created, skipping", indexName)
+	} else if err != nil {
+		return errors.Wrapf(err, "failed to create default index %s for elasticsearch", indexName)
+	} else {
+		logger.LogDebug("Elasticsearch index '%s' created", indexName)
+	}
+	return nil
 }
