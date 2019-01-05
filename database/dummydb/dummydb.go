@@ -125,6 +125,26 @@ func (c *Client) ES_SaveServiceStatus(s *status.ServiceStatus) error {
 	return nil
 }
 
+
+func (c *Client) ES_DeleteServicesStatus(from time.Time, to time.Time) error {
+	fmt.Printf("ES_DeleteServicesStatus - NOT IMPLEMENTED\n")
+	return nil
+}
+
+func (c *Client) ES_GetAggregatedServicesStatusByID(from time.Time, to time.Time, serviceID int) ([]*status.AgregatedServiceStatus, error) {
+	var serviceStatusArray []*status.AgregatedServiceStatus
+	// TODO
+	fmt.Printf("ES_GetAggregatedServicesStatusByID - NOT IMPLEMENTED\n")
+	return serviceStatusArray, nil
+}
+
+func (c *Client) ES_SaveAggregatedServiceStatus(s *status.AgregatedServiceStatus) error {
+	// TODO
+	fmt.Printf("ES_SaveAggregatedServiceStatus - NOT IMPLEMENTED\n")
+	return nil
+}
+
+
 // ********************************************
 // MARIA DB
 //----------------------------------------------
