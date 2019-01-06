@@ -22,8 +22,8 @@ const (
 	esStatusIndex   = "service_status"
 	esStatusDocName = "service_status"
 
-	esAggregatedStatusIndex   = "service_status"
-	esAggregatedStatusDocName = "service_status"
+	esAggregatedStatusIndex   = "aggregated_service_status"
+	esAggregatedStatusDocName = "aggregated_service_status"
 )
 
 func DBDriverName() string {
