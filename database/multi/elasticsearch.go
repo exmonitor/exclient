@@ -109,8 +109,8 @@ func (c *Client) ES_GetAggregatedServiceStatusByID(from time.Time, to time.Time,
 	searchQuery := elastic.NewBoolQuery().Must(termQuery).Filter(timeRangeFilter)
 
 	// execute search querry
-	// TODO use backoff retry
-	searchResult, err := c.esClient.Search().Index(esAggregatedStatusIndex).Query(searchQuery).Sort("@timestamp_to", true).Size(1).Do(c.ctx)
+	// TODO use backoff retry , Sort("@timestamp_to", true)
+	searchResult, err := c.esClient.Search().Index(esAggregatedStatusIndex).Query(searchQuery).Size(1).Do(c.ctx)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to get ES_GetAggregatedServicesStatus")
 	}
