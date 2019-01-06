@@ -173,17 +173,6 @@ func createElasticsearchClient(conf Config, ctx context.Context) (*elastic.Clien
 		return nil, err
 	}
 
-	// ensure aggregated_status index is created
-	_, err = esClient.CreateIndex(esAggregatedStatusIndex).Do(ctx)
-	if elastic.IsStatusCode(err, 400) {
-		// all good, index already exists
-		conf.Logger.LogDebug("Elasticsearch index '%s' already created, skipping", esAggregatedStatusIndex)
-	} else if err != nil {
-		return nil, errors.Wrapf(err, "failed to create default index %s for elasticsearch", esAggregatedStatusIndex)
-	} else {
-		conf.Logger.LogDebug("Elasticsearch index '%s' created", esAggregatedStatusIndex)
-	}
-
 	t2.Finish()
 	conf.Logger.Log("successfully connected to elasticsearch db %s", conf.ElasticConnection)
 	if conf.TimeProfiling {
