@@ -35,6 +35,10 @@ func (c *Client) Close() {
 var dummyDBStatusCounter = 0
 var dummyDBStatusIncreaser = 1
 
+const (
+	timeLayout = "2006-01-02 15:04:05"
+)
+
 // **************************************************
 // ELASTIC SEARCH
 ///--------------------------------------------------
@@ -123,6 +127,68 @@ func (c *Client) ES_GetFailedServices(from time.Time, to time.Time, interval int
 func (c *Client) ES_GetServicesStatus(from time.Time, to time.Time, elasticQuery ...elastic.Query) ([]*status.ServiceStatus, error) {
 	var serviceStatusArray []*status.ServiceStatus
 
+	t1, _ := time.Parse(timeLayout, "2019-01-07 16:08:00")
+	s1 := &status.ServiceStatus{
+		Id:              1,
+		Interval:        30,
+		Result:          true,
+		Duration:        time.Second,
+		ReqId:           "xxx",
+		FailThreshold:   5,
+		Message:         "ok",
+		InsertTimestamp: t1,
+	}
+
+	t2, _ := time.Parse(timeLayout, "2019-01-07 16:09:00")
+	s2 := &status.ServiceStatus{
+		Id:              1,
+		Interval:        30,
+		Result:          true,
+		Duration:        time.Second,
+		ReqId:           "xxx",
+		FailThreshold:   5,
+		Message:         "ok",
+		InsertTimestamp: t2,
+	}
+
+	t3, _ := time.Parse(timeLayout, "2019-01-07 12:04:00")
+	s3 := &status.ServiceStatus{
+		Id:              2,
+		Interval:        30,
+		Result:          true,
+		Duration:        time.Second,
+		ReqId:           "xxx",
+		FailThreshold:   5,
+		Message:         "ok",
+		InsertTimestamp: t3,
+	}
+
+	t4, _ := time.Parse(timeLayout, "2019-01-07 12:04:30")
+	s4 := &status.ServiceStatus{
+		Id:              2,
+		Interval:        30,
+		Result:          false,
+		Duration:        time.Second,
+		ReqId:           "xxx",
+		FailThreshold:   5,
+		Message:         "ok",
+		InsertTimestamp: t4,
+	}
+
+	t5, _ := time.Parse(timeLayout, "2019-01-07 12:05:00")
+	s5 := &status.ServiceStatus{
+		Id:              2,
+		Interval:        30,
+		Result:          true,
+		Duration:        time.Second,
+		ReqId:           "xxx",
+		FailThreshold:   5,
+		Message:         "ok",
+		InsertTimestamp: t5,
+	}
+
+	serviceStatusArray = append(serviceStatusArray, s1, s2, s3, s4, s5)
+
 	return serviceStatusArray, nil
 }
 
@@ -139,14 +205,41 @@ func (c *Client) ES_DeleteServicesStatus(from time.Time, to time.Time) error {
 
 func (c *Client) ES_GetAggregatedServiceStatusByID(from time.Time, to time.Time, serviceID int) (*status.AgregatedServiceStatus, error) {
 	var serviceStatus *status.AgregatedServiceStatus
-	// TODO
-	fmt.Printf("ES_GetAggregatedServicesStatusByID - NOT IMPLEMENTED\n")
+
+	if serviceID == 1 {
+		from, _ := time.Parse(timeLayout, "2019-01-07 16:02:10")
+		to, _ := time.Parse(timeLayout, "2019-01-07 16:05:35")
+		serviceStatus = &status.AgregatedServiceStatus{
+			Id:            "xaxWSCsxw",
+			ServiceID:     1,
+			Result:        true,
+			Interval:      30,
+			Aggregated:    10,
+			AvgDuration:   time.Second,
+			TimestampFrom: from,
+			TimestampTo:   to,
+		}
+	} else if serviceID == 2 {
+		from, _ := time.Parse(timeLayout, "2019-01-07 12:02:30")
+		to, _ := time.Parse(timeLayout, "2019-01-07 12:03:00")
+		serviceStatus = &status.AgregatedServiceStatus{
+			Id:            "xaxsxAFWw",
+			ServiceID:     2,
+			Result:        true,
+			Interval:      30,
+			Aggregated:    1,
+			AvgDuration:   time.Second,
+			TimestampFrom: from,
+			TimestampTo:   to,
+		}
+	}
+
 	return serviceStatus, nil
 }
 
 func (c *Client) ES_SaveAggregatedServiceStatus(s *status.AgregatedServiceStatus) error {
 	// TODO
-	fmt.Printf("ES_SaveAggregatedServiceStatus - NOT IMPLEMENTED\n")
+	fmt.Printf("ES_SaveAggregatedServiceStatus - NOT IMPLEMENTED, saving %s\n", s.String())
 	return nil
 }
 

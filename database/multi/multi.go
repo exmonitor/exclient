@@ -113,10 +113,6 @@ func New(conf Config) (*Client, error) {
 	return newClient, nil
 }
 
-func mysqlConnectionString(mariaConnection string, mariaUser string, mariaPassword string, mariaDatabaseName string) string {
-	return fmt.Sprintf("%s:%s@%s/%s", mariaUser, mariaPassword, mariaConnection, mariaDatabaseName)
-}
-
 // close db connections
 func (c *Client) Close() {
 	c.sqlClient.Close()
@@ -194,4 +190,8 @@ func ensureCreatedIndex(ctx context.Context, esClient *elastic.Client, indexName
 		logger.LogDebug("Elasticsearch index '%s' created", indexName)
 	}
 	return nil
+}
+
+func mysqlConnectionString(mariaConnection string, mariaUser string, mariaPassword string, mariaDatabaseName string) string {
+	return fmt.Sprintf("%s:%s@%s/%s", mariaUser, mariaPassword, mariaConnection, mariaDatabaseName)
 }
