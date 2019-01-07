@@ -140,10 +140,12 @@ func (c *Client) ES_GetAggregatedServiceStatusByID(from time.Time, to time.Time,
 func (c *Client) ES_SaveAggregatedServiceStatus(s *status.AgregatedServiceStatus) error {
 	var err error
 	t := chronos.New()
-	// insert data to elasticsearch db, if the record already exists, use hte elastic id to update record
+	// insert data to elasticsearch db, if the record already exists, use update function
 	if s.Id != "" {
-		_, err = c.esClient.Index().Index(esAggregatedStatusIndex).Type(esAggregatedStatusDocName).Id(s.Id).BodyJson(s).Do(c.ctx)
+		// update existing document
+		_, err = c.esClient.Update().Index(esAggregatedStatusIndex).Type(esAggregatedStatusDocName).Id(s.Id).Doc(s).Do(c.ctx)
 	} else {
+		// insert new document
 		_, err = c.esClient.Index().Index(esAggregatedStatusIndex).Type(esAggregatedStatusDocName).BodyJson(s).Do(c.ctx)
 	}
 
