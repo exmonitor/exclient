@@ -51,7 +51,7 @@ func (c *Client) ES_GetServicesStatus(from time.Time, to time.Time, elasticQuery
 			break
 		}
 		if err != nil {
-			return nil, errors.Wrapf(err, "failed to get ES_GetFailedServices")
+			return nil, errors.Wrapf(err, "failed to get ES_GetServicesStatus")
 		}
 
 		// parse results into struct
@@ -61,7 +61,7 @@ func (c *Client) ES_GetServicesStatus(from time.Time, to time.Time, elasticQuery
 				serviceStatusArray = append(serviceStatusArray, &s)
 			} else {
 				// TODO should we exit ??
-				c.logger.LogError(nil, "failed to parse status.ServiceStatus num %d in ES_SaveServiceStatus", i)
+				c.logger.LogError(nil, "failed to parse status.ServiceStatus num %d in ES_GetServicesStatus", i)
 			}
 		}
 	}
@@ -69,7 +69,7 @@ func (c *Client) ES_GetServicesStatus(from time.Time, to time.Time, elasticQuery
 
 	t.Finish()
 	if c.timeProfiling {
-		c.logger.LogDebug("TIME_PROFILING: executed ES_GetFailedServices in %sms, fetched %d results", t.StringMilisec(), len(serviceStatusArray))
+		c.logger.LogDebug("TIME_PROFILING: executed ES_GetServicesStatus in %sms, fetched %d results", t.StringMilisec(), len(serviceStatusArray))
 	}
 
 	return serviceStatusArray, nil
@@ -112,7 +112,7 @@ func (c *Client) ES_GetAggregatedServiceStatusByID(from time.Time, to time.Time,
 	var aggregatedServiceStatus *status.AgregatedServiceStatus
 	t := chronos.New()
 	// search specific serviceID
-	termQuery := elastic.NewTermQuery("id", serviceID)
+	termQuery := elastic.NewTermQuery("service_id", serviceID)
 	// datetime range query
 	timeRangeFilter := elastic.NewRangeQuery("@timestamp_to").Gte(from).Lt(to)
 	// compile query
@@ -152,6 +152,7 @@ func (c *Client) ES_GetAggregatedServiceStatusByID(from time.Time, to time.Time,
 	return aggregatedServiceStatus, nil
 }
 
+// insert new or update existing aggregated_service_status
 func (c *Client) ES_SaveAggregatedServiceStatus(s *status.AgregatedServiceStatus) error {
 	var err error
 	t := chronos.New()
@@ -170,7 +171,11 @@ func (c *Client) ES_SaveAggregatedServiceStatus(s *status.AgregatedServiceStatus
 
 	t.Finish()
 	if c.timeProfiling {
-		c.logger.LogDebug("TIME_PROFILING: executed ES_SaveAggregatedServiceStatus in %sms", t.StringMilisec())
+		if s.Id != "" {
+			c.logger.LogDebug("TIME_PROFILING: executed ES_SaveAggregatedServiceStatus operation 'Update' in %sms", t.StringMilisec())
+		} else {
+			c.logger.LogDebug("TIME_PROFILING: executed ES_SaveAggregatedServiceStatus operation 'Insert' in %sms", t.StringMilisec())
+		}
 	}
 	return nil
 
