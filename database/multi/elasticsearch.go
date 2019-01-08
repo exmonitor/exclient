@@ -9,7 +9,6 @@ import (
 	"github.com/exmonitor/exclient/database/spec/status"
 	"github.com/olivere/elastic"
 	"github.com/pkg/errors"
-	"math"
 	"reflect"
 )
 
@@ -43,7 +42,7 @@ func (c *Client) ES_GetServicesStatus(from time.Time, to time.Time, elasticQuery
 	// execute search querry
 	// aggregated
 	// TODO use backoff retry
-	searchResult, err := c.esClient.Search().Index(esStatusIndex).Query(searchQuery).Size(math.MaxInt32).Do(c.ctx)
+	searchResult, err := c.esClient.Search().Index(esStatusIndex).Query(searchQuery).Size(1000000).Do(c.ctx)
 
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to get ES_GetFailedServices")
@@ -106,15 +105,20 @@ func (c *Client) ES_GetAggregatedServiceStatusByID(from time.Time, to time.Time,
 	// search specific serviceID
 	termQuery := elastic.NewTermQuery("id", serviceID)
 	// datetime range query
-	timeRangeFilter := elastic.NewRangeQuery("@timestamp").Gte(from).Lt(to)
+	timeRangeFilter := elastic.NewRangeQuery("@timestamp_to").Gte(from).Lt(to)
 	// compile query
 	searchQuery := elastic.NewBoolQuery().Must(termQuery).Filter(timeRangeFilter)
 
 	// execute search querry
 	// TODO use backoff retry , Sort("@timestamp_to", true)
-	searchResult, err := c.esClient.Search().Index(esAggregatedStatusIndex).Query(searchQuery).Size(1).Do(c.ctx)
+	searchResult, err := c.esClient.Search().Index(esAggregatedStatusIndex).Query(searchQuery).Sort("@timestamp_to", false).Size(1).Do(c.ctx)
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to get ES_GetAggregatedServicesStatus")
+		c.logger.LogDebug("cannot sort by timestamp_to, possible no record for serviceID")
+		searchResult, err = c.esClient.Search().Index(esAggregatedStatusIndex).Query(searchQuery).Size(1).Do(c.ctx)
+		if err != nil {
+
+			return nil, errors.Wrapf(err, "failed to get ES_GetAggregatedServicesStatus")
+		}
 	}
 	// parse result
 	if searchResult.Hits.TotalHits > 0 {
