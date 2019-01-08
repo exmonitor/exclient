@@ -38,11 +38,11 @@ func (c *Client) ES_GetServicesStatus(from time.Time, to time.Time, elasticQuery
 
 	// build whole search query
 	searchQuery := elastic.NewBoolQuery().Must(elasticQuery...).Filter(timeRangeFilter)
-
+	
 	// execute search querry
 	// aggregated
 	// TODO use backoff retry
-	searchResult, err := c.esClient.Search().Index(esStatusIndex).Size(-1).Query(searchQuery).Do(c.ctx)
+	searchResult, err := c.esClient.Search().Index(esStatusIndex).Size(1000).Query(searchQuery).Do(c.ctx)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to get ES_GetFailedServices")
 	}
