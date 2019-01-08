@@ -28,7 +28,7 @@ type Client struct {
 }
 
 func GetClient(config Config) *Client {
-	fmt.Printf("using DUMMYDB driver\n")
+	config.Logger.Log("using DUMMYDB driver")
 	return &Client{}
 }
 
@@ -191,7 +191,31 @@ func (c *Client) ES_GetServicesStatus(from time.Time, to time.Time, elasticQuery
 		InsertTimestamp: t5,
 	}
 
-	serviceStatusArray = append(serviceStatusArray, s1, s2, s3, s4, s5)
+	t6, _ := time.Parse(timeLayout, "2019-01-07 13:04:30")
+	s6 := &status.ServiceStatus{
+		Id:              3,
+		Interval:        30,
+		Result:          false,
+		Duration:        time.Second,
+		ReqId:           "xxx",
+		FailThreshold:   5,
+		Message:         "ok",
+		InsertTimestamp: t6,
+	}
+
+	t7, _ := time.Parse(timeLayout, "2019-01-07 13:05:00")
+	s7 := &status.ServiceStatus{
+		Id:              3,
+		Interval:        30,
+		Result:          true,
+		Duration:        time.Second,
+		ReqId:           "xxx",
+		FailThreshold:   5,
+		Message:         "ok",
+		InsertTimestamp: t7,
+	}
+
+	serviceStatusArray = append(serviceStatusArray, s1, s2, s3, s4, s5, s6, s7)
 
 	return serviceStatusArray, nil
 }
@@ -236,6 +260,8 @@ func (c *Client) ES_GetAggregatedServiceStatusByID(from time.Time, to time.Time,
 			TimestampFrom: from,
 			TimestampTo:   to,
 		}
+	} else if serviceID == 3 {
+		serviceStatus = nil
 	}
 
 	return serviceStatus, nil
