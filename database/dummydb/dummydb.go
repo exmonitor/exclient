@@ -195,7 +195,7 @@ func (c *Client) ES_GetServicesStatus(from time.Time, to time.Time, elasticQuery
 	s6 := &status.ServiceStatus{
 		Id:              3,
 		Interval:        30,
-		Result:          false,
+		Result:          true,
 		Duration:        time.Second,
 		ReqId:           "xxx",
 		FailThreshold:   5,

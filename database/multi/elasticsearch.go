@@ -10,6 +10,7 @@ import (
 	"github.com/olivere/elastic"
 	"github.com/pkg/errors"
 	"reflect"
+	"math"
 )
 
 // **************************************************
@@ -42,7 +43,7 @@ func (c *Client) ES_GetServicesStatus(from time.Time, to time.Time, elasticQuery
 	// execute search querry
 	// aggregated
 	// TODO use backoff retry
-	searchResult, err := c.esClient.Search().Index(esStatusIndex).Query(searchQuery).Do(c.ctx)
+	searchResult, err := c.esClient.Search().Index(esStatusIndex).Query(searchQuery).Size(math.MaxInt32).Do(c.ctx)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to get ES_GetFailedServices")
 	}
