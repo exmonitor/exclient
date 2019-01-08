@@ -142,7 +142,7 @@ func (c *Client) ES_GetServicesStatus(from time.Time, to time.Time, elasticQuery
 	t2, _ := time.Parse(timeLayout, "2019-01-07 16:09:00")
 	s2 := &status.ServiceStatus{
 		Id:              1,
-		Interval:        30,
+		Interval:        60,
 		Result:          true,
 		Duration:        time.Second,
 		ReqId:           "xxx",

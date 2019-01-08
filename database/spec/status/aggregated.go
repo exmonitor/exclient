@@ -17,7 +17,7 @@ type AgregatedServiceStatus struct {
 }
 
 func (a *AgregatedServiceStatus) String() string {
-	return fmt.Sprintf("[id:%s, serviceID%d, interval:%d, aggregated: %d, result: %t, from: %s, to: %s]", a.Id, a.ServiceID, a.Interval, a.Aggregated, a.Result, simpleTimeFormat(a.TimestampFrom), simpleTimeFormat(a.TimestampTo))
+	return fmt.Sprintf("[id:%s, serviceID: %d, interval: %d, aggregated: %d, result: %t, from: %s, to: %s]", a.Id, a.ServiceID, a.Interval, a.Aggregated, a.Result, simpleTimeFormat(a.TimestampFrom), simpleTimeFormat(a.TimestampTo))
 }
 
 func simpleTimeFormat(t time.Time) string {
