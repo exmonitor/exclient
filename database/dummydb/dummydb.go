@@ -28,7 +28,7 @@ type Client struct {
 }
 
 func GetClient(config Config) *Client {
-	config.Logger.Log("using DUMMYDB driver")
+	fmt.Printf("using DUMMYDB driver\n")
 	return &Client{}
 }
 
