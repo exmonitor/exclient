@@ -9,9 +9,12 @@ import (
 	"github.com/exmonitor/exclient/database/spec/service"
 	"github.com/exmonitor/exclient/database/spec/status"
 	"github.com/olivere/elastic"
+	"github.com/exmonitor/exlogger"
 )
 
 type Config struct {
+	Logger *exlogger.Logger
+
 	// no config for dummydb needed
 }
 
@@ -25,6 +28,7 @@ type Client struct {
 }
 
 func GetClient(config Config) *Client {
+	config.Logger.Log("using DUMMYDB driver")
 	return &Client{}
 }
 
@@ -239,7 +243,7 @@ func (c *Client) ES_GetAggregatedServiceStatusByID(from time.Time, to time.Time,
 
 func (c *Client) ES_SaveAggregatedServiceStatus(s *status.AgregatedServiceStatus) error {
 	// TODO
-	fmt.Printf("ES_SaveAggregatedServiceStatus - NOT IMPLEMENTED, saving %s\n", s.String())
+	fmt.Printf("ES_SaveAggregatedServiceStatus - NOT IMPLEMENTED,\n")
 	return nil
 }
 
