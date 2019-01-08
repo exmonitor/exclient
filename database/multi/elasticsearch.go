@@ -10,6 +10,7 @@ import (
 	"github.com/olivere/elastic"
 	"github.com/pkg/errors"
 	"reflect"
+	"io"
 )
 
 // **************************************************
@@ -38,25 +39,34 @@ func (c *Client) ES_GetServicesStatus(from time.Time, to time.Time, elasticQuery
 
 	// build whole search query
 	searchQuery := elastic.NewBoolQuery().Must(elasticQuery...).Filter(timeRangeFilter)
-	
+
 	// execute search querry
 	// aggregated
 	// TODO use backoff retry
-	searchResult, err := c.esClient.Search().Index(esStatusIndex).Size(1000).Query(searchQuery).Do(c.ctx)
-	if err != nil {
-		return nil, errors.Wrapf(err, "failed to get ES_GetFailedServices")
-	}
+	scrollService := c.esClient.Scroll(esStatusIndex).Size(scrollWindowSize).Query(searchQuery)
+	for {
+		result , err := scrollService.Do(c.ctx)
+		if err == io.EOF {
+			// end of scroll window, lets exit
+			break
+		}
+		if err != nil {
+			return nil, errors.Wrapf(err, "failed to get ES_GetFailedServices")
+		}
 
-	// parse results into struct
-	var ttyp status.ServiceStatus
-	for i, item := range searchResult.Each(reflect.TypeOf(ttyp)) {
-		if s, ok := item.(status.ServiceStatus); ok {
-			serviceStatusArray = append(serviceStatusArray, &s)
-		} else {
-			// TODO should we exit ??
-			c.logger.LogError(nil, "failed to parse status.ServiceStatus num %d in ES_SaveServiceStatus", i)
+		// parse results into struct
+		var ttyp status.ServiceStatus
+		for i, item := range result.Each(reflect.TypeOf(ttyp)) {
+			if s, ok := item.(status.ServiceStatus); ok {
+				serviceStatusArray = append(serviceStatusArray, &s)
+			} else {
+				// TODO should we exit ??
+				c.logger.LogError(nil, "failed to parse status.ServiceStatus num %d in ES_SaveServiceStatus", i)
+			}
 		}
 	}
+
+
 	t.Finish()
 	if c.timeProfiling {
 		c.logger.LogDebug("TIME_PROFILING: executed ES_GetFailedServices in %sms, fetched %d results", t.StringMilisec(), len(serviceStatusArray))

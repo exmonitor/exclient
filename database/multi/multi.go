@@ -24,6 +24,9 @@ const (
 
 	esAggregatedStatusIndex   = "aggregated_service_status"
 	esAggregatedStatusDocName = "aggregated_service_status"
+
+
+	scrollWindowSize = 5000 // this is influenced by 'index.max_result_window' which is by default set to '10 000'
 )
 
 func DBDriverName() string {
