@@ -59,7 +59,7 @@ func (c *Client) ES_GetServicesStatus(from time.Time, to time.Time, elasticQuery
 	}
 	t.Finish()
 	if c.timeProfiling {
-		c.logger.LogDebug("TIME_PROFILING: executed ES_GetFailedServices in %sms", t.StringMilisec())
+		c.logger.LogDebug("TIME_PROFILING: executed ES_GetFailedServices in %sms, fetched %d results", t.StringMilisec(), len(serviceStatusArray))
 	}
 
 	return serviceStatusArray, nil
