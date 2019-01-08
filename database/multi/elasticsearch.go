@@ -9,8 +9,8 @@ import (
 	"github.com/exmonitor/exclient/database/spec/status"
 	"github.com/olivere/elastic"
 	"github.com/pkg/errors"
-	"reflect"
 	"math"
+	"reflect"
 )
 
 // **************************************************
@@ -44,6 +44,7 @@ func (c *Client) ES_GetServicesStatus(from time.Time, to time.Time, elasticQuery
 	// aggregated
 	// TODO use backoff retry
 	searchResult, err := c.esClient.Search().Index(esStatusIndex).Query(searchQuery).Size(math.MaxInt32).Do(c.ctx)
+
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to get ES_GetFailedServices")
 	}
