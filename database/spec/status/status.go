@@ -8,7 +8,6 @@ type ServiceStatus struct {
 	Interval      int           `json:"interval"`
 	Duration      time.Duration `json:"duration"`
 	Message       string        `json:"message"`
-	Port          int           `json:"port"`
 	Result        bool          `json:"result"`
 	ReqId         string        `json:"reqId"`
 	// used for saving timestamp when it was inserted into ES DB
