@@ -1,8 +1,10 @@
 package multi
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
+	"time"
 
 	"github.com/exmonitor/chronos"
 	"github.com/exmonitor/exlogger"
@@ -10,10 +12,8 @@ import (
 	"github.com/olivere/elastic"
 	"github.com/pkg/errors"
 
-	"context"
 	"github.com/exmonitor/exclient/database"
 	"github.com/exmonitor/exclient/database/multi/cache"
-	"time"
 )
 
 const (
