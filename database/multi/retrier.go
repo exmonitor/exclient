@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	maxRetries = 10
+	maxRetries = 15
 )
 
 type ElasticRetrier struct {
@@ -23,7 +23,7 @@ func (e *ElasticRetrier) Retry(ctx context.Context, retry int, req *http.Request
 	// Stop after 10 retries
 	if retry >= maxRetries {
 		e.logger.LogError(executionFailedError, "elasticSearchRetrier failed  after %d retries", maxRetries)
-		return 0, false, nil
+		return 0, false, executionFailedError
 	}
 
 	e.logger.Log("retrying elasticSearch db request  %d/%d", retry, maxRetries)
@@ -34,7 +34,7 @@ func (e *ElasticRetrier) Retry(ctx context.Context, retry int, req *http.Request
 
 func NewElasticRetrier(logger *exlogger.Logger) *ElasticRetrier {
 	return &ElasticRetrier{
-		backoff: elastic.NewExponentialBackoff(50*time.Millisecond, 10*time.Second),
+		backoff: elastic.NewExponentialBackoff(250*time.Millisecond, 30*time.Second),
 		logger:  logger,
 	}
 }
