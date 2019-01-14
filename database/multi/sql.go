@@ -4,10 +4,10 @@ import (
 	"github.com/exmonitor/chronos"
 	"github.com/pkg/errors"
 
+	"database/sql"
+	"github.com/cenkalti/backoff"
 	"github.com/exmonitor/exclient/database/spec/notification"
 	"github.com/exmonitor/exclient/database/spec/service"
-	"github.com/cenkalti/backoff"
-	"database/sql"
 )
 
 // ********************************************
@@ -35,11 +35,11 @@ func (c *Client) SQL_GetIntervals() ([]int, error) {
 
 	var rows *sql.Rows
 	// create sql query
-	o := func () error {
+	o := func() error {
 		rows, err = c.sqlClient.Query(q)
 		return err
 	}
-	err = backoff.Retry(o , NewSQLBackoff(c.logger))
+	err = backoff.Retry(o, NewSQLBackoff(c.logger))
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to execute SQL_GetIntervals")
 	}
@@ -109,22 +109,20 @@ func (c *Client) SQL_GetUsersNotificationSettings(serviceID int) ([]*notificatio
 		"WHERE services.id_services = ?;"
 
 	var rows *sql.Rows
-	// prepare sql query
-	query, err := c.sqlClient.Prepare(q)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to prepare query SQL_GetUsersNotificationSettings")
-	}
 	// prepare backoff
-	o := func () error {
+	o := func() error {
+		query, err := c.sqlClient.Prepare(q)
+		if err != nil {
+			return err
+		}
 		rows, err = query.Query(serviceID)
 		return err
 	}
 	// execute query via backoff
-	err = backoff.Retry(o , NewSQLBackoff(c.logger))
+	err = backoff.Retry(o, NewSQLBackoff(c.logger))
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to execute SQL_GetUsersNotificationSettings")
 	}
-
 
 	// read result
 	for rows.Next() {
@@ -196,7 +194,7 @@ func (c *Client) SQL_GetServices(intervalSec int) ([]*service.Service, error) {
 
 	var rows *sql.Rows
 	// prepare backoff
-	o := func () error {
+	o := func() error {
 		query, err := c.sqlClient.Prepare(q)
 		if err != nil {
 			return err
@@ -205,7 +203,7 @@ func (c *Client) SQL_GetServices(intervalSec int) ([]*service.Service, error) {
 		return err
 	}
 	// execute query via backoff
-	err = backoff.Retry(o , NewSQLBackoff(c.logger))
+	err = backoff.Retry(o, NewSQLBackoff(c.logger))
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to execute SQL_GetServices")
 	}
@@ -283,18 +281,17 @@ func (c *Client) SQL_GetServiceDetails(serviceID int) (*service.Service, error) 
 		"WHERE services.id_services=?;"
 
 	var rows *sql.Rows
-	// prepare sql query
-	query, err := c.sqlClient.Prepare(q)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to prepare query SQL_GetServiceDetails")
-	}
 	// prepare backoff
-	o := func () error {
+	o := func() error {
+		query, err := c.sqlClient.Prepare(q)
+		if err != nil {
+			return err
+		}
 		rows, err = query.Query(serviceID)
 		return err
 	}
 	// execute query via backoff
-	err = backoff.Retry(o , NewSQLBackoff(c.logger))
+	err = backoff.Retry(o, NewSQLBackoff(c.logger))
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to execute SQL_GetServiceDetails")
 	}

@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	sqlMaxRetry = 10
+	sqlMaxRetry = 15
 )
 
 var sqlBackoffMin = time.Millisecond * 500
