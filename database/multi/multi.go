@@ -26,6 +26,8 @@ const (
 	esAggregatedStatusDocName = "aggregated_service_status"
 
 	scrollWindowSize = 5000 // this is influenced by 'index.max_result_window' which is by default set to '10 000'
+
+
 )
 
 func DBDriverName() string {
@@ -151,7 +153,7 @@ func createSqlClient(conf Config) (*sql.DB, error) {
 func createElasticsearchClient(conf Config, ctx context.Context) (*elastic.Client, error) {
 	t2 := chronos.New()
 	// Create a client
-	esClient, err := elastic.NewClient(elastic.SetURL(conf.ElasticConnection), elastic.SetRetrier(NewElasticRetrier(conf.Logger)))
+	esClient, err := elastic.NewClient(elastic.SetURL(conf.ElasticConnection), elastic.SetRetrier(NewElasticBackoff(conf.Logger)))
 
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create elasticsearch connection")
@@ -174,7 +176,7 @@ func createElasticsearchClient(conf Config, ctx context.Context) (*elastic.Clien
 	t2.Finish()
 	conf.Logger.Log("successfully connected to elasticsearch db %s", conf.ElasticConnection)
 	if conf.TimeProfiling {
-		conf.Logger.LogDebug("TIME_PROFILING: created elasticsearch connection in %sms, %ss", t2.StringMilisec(), t2.StringSecLong())
+		conf.Logger.LogDebug("TIME_PROFILING: created elasticsearch connection in %sms", t2.StringMilisec())
 	}
 
 	return esClient, nil
