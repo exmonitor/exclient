@@ -195,13 +195,12 @@ func (c *Client) SQL_GetServices(intervalSec int) ([]*service.Service, error) {
 		"WHERE intervalSec.value=?;"
 
 	var rows *sql.Rows
-	// prepare sql query
-	query, err := c.sqlClient.Prepare(q)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to prepare query SQL_GetServices")
-	}
 	// prepare backoff
 	o := func () error {
+		query, err := c.sqlClient.Prepare(q)
+		if err != nil {
+			return err
+		}
 		rows, err = query.Query(intervalSec)
 		return err
 	}

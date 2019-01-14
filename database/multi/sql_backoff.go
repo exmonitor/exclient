@@ -9,11 +9,11 @@ import (
 )
 
 const (
-	sqlMaxRetry = 30
+	sqlMaxRetry = 10
 )
 
 var sqlBackoffMin = time.Millisecond * 500
-var sqlBackoffMax = time.Second * 120
+var sqlBackoffMax = time.Second * 20
 var sqlMaxElapsedTime = time.Minute * 120
 
 type sqlBackoff struct {
