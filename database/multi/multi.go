@@ -25,7 +25,6 @@ const (
 	esAggregatedStatusIndex   = "aggregated_service_status"
 	esAggregatedStatusDocName = "aggregated_service_status"
 
-
 	scrollWindowSize = 5000 // this is influenced by 'index.max_result_window' which is by default set to '10 000'
 )
 
@@ -152,7 +151,7 @@ func createSqlClient(conf Config) (*sql.DB, error) {
 func createElasticsearchClient(conf Config, ctx context.Context) (*elastic.Client, error) {
 	t2 := chronos.New()
 	// Create a client
-	esClient, err := elastic.NewClient(elastic.SetURL(conf.ElasticConnection))
+	esClient, err := elastic.NewClient(elastic.SetURL(conf.ElasticConnection), elastic.SetRetrier(NewElasticRetrier(conf.Logger)))
 
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create elasticsearch connection")
@@ -162,7 +161,7 @@ func createElasticsearchClient(conf Config, ctx context.Context) (*elastic.Clien
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to ping elasticsearch")
 	}
-
+	// ensure index creation
 	err = ensureCreatedIndex(ctx, esClient, esStatusIndex, conf.Logger)
 	if err != nil {
 		return nil, err
